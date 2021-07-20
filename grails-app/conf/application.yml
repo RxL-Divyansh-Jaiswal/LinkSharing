@@ -102,7 +102,7 @@ environments:
             url: jdbc:oracle:thin:@localhost:1521/orcl
     test:
         dataSource:
-            dbCreate: create-drop
+            dbCreate: update
             url: jdbc:oracle:thin:@localhost:1521/orcl
     production:
         dataSource:
