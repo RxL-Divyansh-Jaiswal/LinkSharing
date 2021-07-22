@@ -5,7 +5,7 @@ class ResourceRating {
 
 //    resource
 //    user
-    static belongsTo = [resource:Resource,user:User]
+    static belongsTo = [resources:Resource,users:User]
 
     static constraints = {
         score blank: false

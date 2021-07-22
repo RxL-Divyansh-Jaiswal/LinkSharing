@@ -1,11 +1,14 @@
 package linksharing
 
+import linksharing.enums.Seriousness
+
 class Subscription {
+    User subscriber
+    Seriousness seriousness
     Date dateCreated
 
 //  topic
-//  user
-    static belongsTo = [topic:Topic,user:User]
+    static belongsTo = [topic:Topic]
 
 //  enum seriousness
     static constraints = {

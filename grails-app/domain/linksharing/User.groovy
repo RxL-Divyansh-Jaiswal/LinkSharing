@@ -6,18 +6,31 @@ class User {
     String password
     String firstName
     String lastName
-    Byte photo
+    String photo
     boolean admin
     Date dateCreated
     Date lastUpdated
 
-    static hasMany = [topics:Topic,subscriptions:Subscription,resources:Resource,readingItems:ReadingItem]
-//    resourceRating check
+    static transients = ['name']
+
+    String getName(){
+        return "${firstName} ${lastName}"
+    }
+
+    static hasMany = [
+            topics:Topic,
+            subscriptions:Subscription,
+            resources:Resource,
+            readingItems:ReadingItem,
+            resourceRatings: ResourceRating]
 
     static constraints = {
         email(unique: true, email: true)
-        userName(unique: true, blank: false)
-        firstName blank: false
-        password blank: false
+        photo nullable: true, blank: false
+        password(size: 5..15, blank: false)
+    }
+
+    static mapping = {
+        table 'USR'
     }
 }

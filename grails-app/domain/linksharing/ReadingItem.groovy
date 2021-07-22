@@ -2,12 +2,11 @@ package linksharing
 
 class ReadingItem {
     boolean isRead
+    User user
 
 //    resource
-//    user
-    static belongsTo = [resource:Resource,user:User]
+    static belongsTo = [resource:Resource]
 
     static constraints = {
-        isRead blank: false
     }
 }
