@@ -29,6 +29,15 @@
     text-indent: 10px;
 }
 
+.navigator button{
+    font-size: 1.25rem;
+    border-radius: 10px;
+    border: none;
+    background: white;
+    color: blue;
+    cursor: pointer;
+}
+
 /* main area */
 #main_area{
     /*border: 1px solid black;*/
@@ -149,6 +158,16 @@
     border: 1px solid black;
     border-radius: 15px;
     margin: 2% 8%;
+}
+
+.errMsg{
+    color: red;
+    text-align: center;
+}
+
+.succMsg{
+    color: cornflowerblue;
+    text-align: center;
 }
 
 .register_form form{

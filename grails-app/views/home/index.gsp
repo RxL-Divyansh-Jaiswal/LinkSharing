@@ -16,6 +16,7 @@
 
 		<div class="navigator">
 			<input type="text" name="search" placeholder="Search...">
+			<button>Search</button>
 		</div>
 	</div>
 
@@ -112,7 +113,8 @@
 
 			<div class="login_form">
 				<p class="heading"><i>Welcome Back</i></p>
-				<form>
+				<h3 class="errMsg">${flash.error}</h3>
+				<form action="user/loginUser" method="post">
 					<label>Email &nbsp; &nbsp; &nbsp;</label>
 					<input type="email" name="email" required>
 					<br>
@@ -126,6 +128,9 @@
 
 			<div class="register_form">
 				<p class="heading"><i>New Here, Let's get started...</i></p>
+				<h3 class="succMsg">${flash.success}</h3>
+				<h3 class="errMsg">${flash.resError}</h3>
+				<h3 class="errMsg">${flash.passErr}</h3>
 				<form action="user/registerUser" method="post">
 					<label>First name</label>
 					<input type="text" name="firstName" required style="margin-left: 18%;">
