@@ -129,7 +129,7 @@
 			<div class="register_form">
 				<p class="heading"><i>New Here, Let's get started...</i></p>
 				<h3 class="succMsg">${flash.success}</h3>
-				<h3 class="errMsg">${flash.resError}</h3>
+				<h3 class="errMsg">${flash.resErr}</h3>
 				<h3 class="errMsg">${flash.passErr}</h3>
 				<form action="user/registerUser" method="post">
 					<label>First name</label>
