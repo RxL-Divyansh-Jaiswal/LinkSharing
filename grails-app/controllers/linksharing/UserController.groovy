@@ -2,67 +2,49 @@ package linksharing
 
 class UserController {
 
+    def userService
+
     def index() { }
 
+    def dashboard(){
+        render(view: 'dashboard')
+    }
+
     def registerUser(){
-            if(params.password != params.cnf_password){
-//              redirect back with error msg
-                flash.passErr = "Passwords don't match, Please try again..."
-            }else{
-                User newUser = new User(params)
+        String msg = userService.register(request,params)
 
-                try {
-//                  redirect back with success msg
-                    newUser.save(flush:true,failOnError:true)
-                    flash.success = "Registered Successfully, Please Login to continue..."
-                }catch(Exception e){
-//                  redirect back with error msg
-                    flash.resErr = "Error in registering, Please try again..."
-                }
+        if(msg.split(" ")[0] == "Registered"){
+            flash.success = msg
+        }else{
+            flash.resError = msg
+        }
 
-            }
-
-            redirect(controller: "home", action: "index")
+        redirect(controller: "home", action: "index")
     }
 
     def loginUser(){
-        User user = User.findByEmail(params.email)
+        Map map = userService.login(params)
 
-        if(user == null){
-//            redirect back with error msg
-            flash.error = "No account associated with this email"
-            redirect(controller: "home", action: "index")
+        if(map.get('msg').split(" ")[0] == "Login"){
+            session.setAttribute("user",map.get('user'))
+//           render "Login Successfully ${session.user.userName}"
+            redirect(action: "dashboard")
         }else{
-            if(params.password != user.password){
-//                redirect back with an error msg
-                flash.error = "Invalid email/password"
-                redirect(controller: "home", action: "index")
-            }
-
-//            render user home page
-            render "Login Successfully"
+            flash.logError = map.get('msg')
+            redirect(controller: "home", action: "index")
         }
+    }
+
+    def logout(){
+        session.invalidate()
+        redirect(controller: "home", action: "index")
     }
 
     def activateUser(int id){
-        User user = User.findById(id)
-
-        if(user.active == true){
-            return
-        }else{
-            user.active = true
-            user.save(flush: true)
-        }
+        return userService.activate(id)
     }
 
     def deactivateUser(int id){
-        User user = User.findById(id)
-
-        if(user.active == false || user.active == null){
-            return
-        }else{
-            user.active = false
-            user.save(flush: true)
-        }
+        return userService.deactivate(id)
     }
 }

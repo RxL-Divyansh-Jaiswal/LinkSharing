@@ -113,7 +113,7 @@
 
 			<div class="login_form">
 				<p class="heading"><i>Welcome Back</i></p>
-				<h3 class="errMsg">${flash.error}</h3>
+				<h3 class="errMsg">${flash.logError}</h3>
 				<form action="user/loginUser" method="post">
 					<label>Email &nbsp; &nbsp; &nbsp;</label>
 					<input type="email" name="email" required>
@@ -129,9 +129,9 @@
 			<div class="register_form">
 				<p class="heading"><i>New Here, Let's get started...</i></p>
 				<h3 class="succMsg">${flash.success}</h3>
-				<h3 class="errMsg">${flash.resErr}</h3>
-				<h3 class="errMsg">${flash.passErr}</h3>
-				<form action="user/registerUser" method="post">
+				<h3 class="errMsg">${flash.resError}</h3>
+
+				<form action="user/registerUser" method="post" enctype="multipart/form-data">
 					<label>First name</label>
 					<input type="text" name="firstName" required style="margin-left: 18%;">
 					<br>
@@ -151,7 +151,7 @@
 					<input type="password" name="cnf_password" required>
 					<br>
 					<label style="margin-top: 10px;">Photo</label>
-					<input type="file" name="photo">
+					<input type="file" name="image">
 					<br>
 					<input id="registerBtn" type="submit" value="Register">
 				</form>

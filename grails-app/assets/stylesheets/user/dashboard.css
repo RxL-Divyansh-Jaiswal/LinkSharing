@@ -1,0 +1,250 @@
+/* navbar */
+#navbar{
+    /*border: 1px solid black;*/
+    height: 4rem;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #2193b0;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #6dd5ed, #2193b0);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+#navbar .homeLink{
+    margin-left: 1%;
+    font-size: 2rem;
+    text-decoration: none;
+    color: white;
+}
+
+.navigator{
+    margin-right: 1%;
+}
+
+.navigator ul{
+    list-style: none;
+    margin-top: 3%;
+}
+
+.navigator ul li{
+    display: inline-block;
+}
+
+.navigator ul li button{
+    background: transparent;
+    color: white;
+    border: none;
+}
+
+.navigator ul li button i{
+    font-size: 1.5rem;
+}
+
+.navigator input{
+    border: none;
+    font-size: 1.25rem;
+    border-radius: 15px;
+    text-indent: 10px;
+}
+
+.navigator #search_btn{
+    font-size: 1.25rem;
+    border-radius: 10px;
+    border: none;
+    background: white;
+    color: blue;
+    cursor: pointer;
+}
+
+.form_btn{
+    margin-top: 5%;
+    background: white;
+    color: cornflowerblue;
+    border: 2px solid cornflowerblue;
+}
+
+.form_btn:hover{
+    background: cornflowerblue;
+    color: white;
+    border: 2px solid white;
+}
+
+.settings{
+    position: relative;
+    display: inline-block;
+}
+
+.settings_btn{
+    background-color: #04AA6D;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+}
+
+.settings_opt{
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.settings_opt a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.settings_opt a:hover {background-color: #ddd;}
+
+.settings:hover .settings_opt {display: block;}
+
+/* main area */
+#main_area{
+    display: flex;
+    /*border: 1px solid black;*/
+    margin: 2%;
+    height: auto;
+    width: auto;
+}
+
+.user_info{
+    height: 100%;
+    width: 40%;
+    /*background: red;*/
+}
+
+.user_card{
+    border: 1px solid black;
+    height: 8rem;
+    width: auto;
+    margin: 3% 2% 2% 2%;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.trending_topics,.subscriptions{
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+    height: 12rem;
+    margin: 3% 2% 2% 2%;
+    width: auto;
+}
+
+.topic_details{
+    /*border: 0.5px solid black;*/
+    height: 6rem;
+    width: auto;
+    margin: 2%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.topic_info{
+    /*border: 0.5px solid black;*/
+    height: 5rem;
+    width: 22rem;
+}
+
+.head_box{
+    height: 3rem;
+    width: 100%;
+    border-radius: 15px 15px 0 0;
+    background: linear-gradient(to right, #6dd5ed, #2193b0);
+}
+
+.head_box h3{
+    color: white;
+    vertical-align: text-top;
+}
+
+.head_box .post_search_btn{
+    border: none;
+    background: white;
+    color: cornflowerblue;
+    border-radius: 5px;
+}
+
+.posts_list{
+    margin: 1%;
+    overflow-y: scroll;
+}
+
+.posts{
+    /*background: blue; */
+    height: 100%;
+    width: 60%;
+}
+
+.post_list{
+    margin: 2%;
+    min-height: 15rem;
+    max-height: 32rem;
+    width: auto;
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+}
+
+.related_posts{
+    /*border: 1px solid black;*/
+    min-height: 10rem;
+    max-height: 26rem;
+    width: auto;
+    margin: 2%;
+    overflow-y: scroll;
+}
+
+.post_card{
+    /*border: 1px solid black;*/
+    width: auto;
+    height: 8rem;
+    margin: 1%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.post_card_details{
+    /*border: 0.5px solid black;*/
+    height: 5rem;
+    width: 35rem;
+    margin-left: 2%;
+}
+
+.info{
+    height: 2rem;
+    width: 100%;
+    /*border: 0.5px solid black;*/
+}
+
+.post_card_navigator{
+    margin-top: -3%;
+    height: 2rem;
+    width: 100%;
+    /*border: 0.5px solid black;*/
+}
+
+
+/* Additional CSS */
+/* scrollbar */
+
+::-webkit-scrollbar {
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgb(0 0 0);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgb(253 251 251);
+}
