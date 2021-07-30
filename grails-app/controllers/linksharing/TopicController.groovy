@@ -7,17 +7,13 @@ class TopicController {
     def index() { }
 
     def createTopic(){
-        User currUser = session.user
-
-        String msg = topicService.create(currUser,params)
+        String msg = topicService.create(session.user,params)
 
         render msg
     }
 
     def deleteTopic(int id){
-        User currUser = session.user
-
-        String msg = topicService.delete(currUser,id)
+        String msg = topicService.delete(session.user,id)
 
         render msg
     }

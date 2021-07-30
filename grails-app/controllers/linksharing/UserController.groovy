@@ -10,6 +10,10 @@ class UserController {
         render(view: 'dashboard')
     }
 
+    def privateProfile(){
+        render(view: 'privateProfile')
+    }
+
     def registerUser(){
         String msg = userService.register(request,params)
 
@@ -19,7 +23,7 @@ class UserController {
             flash.resError = msg
         }
 
-        redirect(controller: "home", action: "index")
+        redirect url: "/"
     }
 
     def loginUser(){
@@ -31,13 +35,39 @@ class UserController {
             redirect(action: "dashboard")
         }else{
             flash.logError = map.get('msg')
-            redirect(controller: "home", action: "index")
+            redirect url: "/"
         }
+    }
+
+    def getProfile(){
+        User visiting = User.findById(params.id)
+        Map map = ['currUser':session.user,'visitingUser':visiting]
+        String msg = userService.profile(map)
+
+        redirect(action: "privateProfile")
+    }
+
+    def updateProfile(){
+        String msg = userService.profileUpdate(request,session.user,params)
+        flash.profileSucc = msg
+
+        redirect(action: "privateProfile")
+    }
+
+    def updatePassword(){
+        String msg = userService.passwordUpdate(session.user,params)
+        if(msg.split(" ")[0] == "Updated"){
+            flash.passSuccess = msg
+        }else{
+            flash.passError = msg
+        }
+
+        redirect(action: "privateProfile")
     }
 
     def logout(){
         session.invalidate()
-        redirect(controller: "home", action: "index")
+        redirect url: "/"
     }
 
     def activateUser(int id){

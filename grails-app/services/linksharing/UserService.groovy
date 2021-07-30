@@ -1,6 +1,7 @@
 package linksharing
 
 import grails.gorm.transactions.Transactional
+import grails.web.servlet.mvc.GrailsParameterMap
 
 @Transactional
 class UserService {
@@ -15,7 +16,7 @@ class UserService {
             User newUser = new User(params)
             def file = request.getFile('image')
 
-            if (file && !file.empty) {
+            if(file && !file.empty) {
                 File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${params.userName}.jpg")
                 file.transferTo(photo)
                 newUser.photo = "/avatars/${params.userName}.jpg"
@@ -49,14 +50,58 @@ class UserService {
                     msg = "Please contact admin"
                 }
                 msg = "Invalid email/password"
+            }else{
+                map.put('user',user)
+                msg = "Login Successfully"
             }
-
-            map.put('user',user)
-            msg = "Login Successfully"
         }
 
         map.put('msg',msg)
         return map
+    }
+
+    def profile(Map map){
+        if(map.get('currUser').id == map.get('visitingUser').id){
+            return "Private Page"
+        }else{
+            return "Public Page"
+        }
+    }
+
+    def profileUpdate(def request,User user,Map params){
+        File prevPhoto = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.jpg")
+        def file = request.getFile('image')
+
+        String newPhoto
+
+        if(prevPhoto == null){
+            if(file && !file.empty) {
+                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.jpg")
+                file.transferTo(photo)
+                newPhoto = "/avatars/${user.userName}.jpg"
+            }
+        }else{
+            if(file && !file.empty) {
+                file.transferTo(prevPhoto)
+                newPhoto = "/avatars/${user.userName}.jpg"
+            }else{
+                newPhoto = "/avatars/${user.userName}.jpg"
+            }
+        }
+
+        Map map = ['email':params.email,'firstName':params.firstName,'lastName':params.lastName,'userName':params.userName, 'photo':newPhoto,'id':user.id]
+
+        User.executeUpdate('update User set email=:email, firstName=:firstName, lastName=:lastName, userName=:userName, photo=:photo where id=:id',map)
+        return "Updated Successfully"
+    }
+
+    def passwordUpdate(User user,Map params){
+        if(params.password != params.cnf_password){
+            return "Passwords don't match, Please try again..."
+        }else{
+            User.executeUpdate('update User set password=:password where id=:id',['password':params.password,'id':user.id])
+            return "Updated Successfully"
+        }
     }
 
     def activate(int id){
