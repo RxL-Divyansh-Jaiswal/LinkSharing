@@ -23,6 +23,8 @@
 
 </div>
 
+<h3 class="success">${flash.logSuccess}</h3>
+
 <!-- main area -->
 <div id="main_area">
     <div class="posts">

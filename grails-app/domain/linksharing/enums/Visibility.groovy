@@ -1,9 +1,9 @@
 package linksharing.enums
 
 enum Visibility {
-    PRIVATE(0),
+    Private(0),
 
-    PUBLIC(1),
+    Public(1),
 
     private final int val
 

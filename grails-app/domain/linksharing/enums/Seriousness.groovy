@@ -2,9 +2,9 @@ package linksharing.enums
 
 enum Seriousness {
 
-    CASUAL(0),
-    SERIOUS(1),
-    VERY_SERIOUS(2),
+    Casual(0),
+    Serious(1),
+    Very_Serious(2),
 
     private final int val
 

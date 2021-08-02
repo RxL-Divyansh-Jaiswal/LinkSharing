@@ -7,7 +7,8 @@ class UserController {
     def index() { }
 
     def dashboard(){
-        render(view: 'dashboard')
+        List<Subscription> subscriptions = userService.subscriptions(session.user)
+        render(view: 'dashboard', model: [subscriptions: subscriptions])
     }
 
     def privateProfile(){
@@ -31,7 +32,7 @@ class UserController {
 
         if(map.get('msg').split(" ")[0] == "Login"){
             session.setAttribute("user",map.get('user'))
-//           render "Login Successfully ${session.user.userName}"
+            flash.logSuccess = "Logged In Successfully..."
             redirect(action: "dashboard")
         }else{
             flash.logError = map.get('msg')
@@ -48,8 +49,9 @@ class UserController {
     }
 
     def updateProfile(){
-        String msg = userService.profileUpdate(request,session.user,params)
-        flash.profileSucc = msg
+        Map map = userService.profileUpdate(request,session.user,params)
+        flash.profileSucc = map.get('msg')
+        session.setAttribute("user",map.get('user'))
 
         redirect(action: "privateProfile")
     }
@@ -67,6 +69,7 @@ class UserController {
 
     def logout(){
         session.invalidate()
+        flash.logSuccess = "Logged Out Successfully..."
         redirect url: "/"
     }
 

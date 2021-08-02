@@ -44,7 +44,15 @@
 </div>
 
 <!-- modals -->
-<g:render template="/templates/modals" />
+<g:render template="/templates/modals"/>
+
+<h3 class="success">${flash.logSuccess}</h3>
+<h3 class="success">${flash.topicSuccess}</h3>
+<h3 class="success">${flash.linkResSuccess}</h3>
+<h3 class="success">${flash.docResSuccess}</h3>
+<h3 class="error">${flash.topicError}</h3>
+<h3 class="error">${flash.linkResError}</h3>
+<h3 class="error">${flash.docResError}</h3>
 
 <!-- main area -->
 <div id="main_area">
@@ -63,70 +71,105 @@
             </div>
         </div>
 
-        <div class="subscriptions" style="height: 22rem;">
+        <div class="subscriptions" style="height: auto">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Subscriptions</h3>
             </div>
 
-            <div>
-                <div style="height: 8rem;">
-                    <div class="topic_details">
-                        <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                             style="height: 5rem; width: 5rem;">
+            <div style="min-height: 8rem; max-height: 16rem; overflow-y: scroll">
+                <g:each in="${subscriptions}" var="i">
+                    <div style="height: 8rem;">
+                        <div class="topic_details">
+                            <asset:image src="${i.topic.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
+                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                                 %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <div class="topic_info">
-                            <p style="margin: 0;"><a href="">Grails</a></p>
+                            <div class="topic_info">
+                                <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${i.topic.id}">${i.topic.name}</g:link></p>
 
-                            <p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>
+                                <p style="margin:0;">@${i.topic.createdBy.userName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>
 
-                            <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>
+                                <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div style="float: right;">
-                        <select>
-                            <option>Serious</option>
-                            <option>Very Serious</option>
-                            <option>Casual</option>
-                        </select>
+                        <div style="float: right;">
+                            <select>
+                                <option>Serious</option>
+                                <option>Very Serious</option>
+                                <option>Casual</option>
+                            </select>
 
-                        <select>
-                            <option>Private</option>
-                            <option>Public</option>
-                        </select>
+                            <select>
+                                <option>Private</option>
+                                <option>Public</option>
+                            </select>
 
-                        <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
-                        <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
-                        <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
-                    </div>
-
-                </div>
-
-                <div style="height: 8rem;">
-                    <div class="topic_details">
-                        <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                             style="height: 5rem; width: 5rem;">
-
-                        <div class="topic_info">
-                            <p style="margin: 0;"><a href="">Grails</a></p>
-
-                            <p style="margin:0;">@rcthomas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>
-
-                            <p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50
-                            </p>
+                            <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+                            <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
+                            <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
                         </div>
-                    </div>
 
-                    <div style="float: right;">
-                        <select>
-                            <option>Serious</option>
-                            <option>Very Serious</option>
-                            <option>Casual</option>
-                        </select>
-
-                        <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
                     </div>
-                </div>
+                </g:each>
+                %{--<div style="height: 8rem;">--}%
+                    %{--<div class="topic_details">--}%
+                        %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                             %{--style="height: 5rem; width: 5rem;">--}%
+
+                        %{--<div class="topic_info">--}%
+                            %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
+
+                            %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
+
+                            %{--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+
+                    %{--<div style="float: right;">--}%
+                        %{--<select>--}%
+                            %{--<option>Serious</option>--}%
+                            %{--<option>Very Serious</option>--}%
+                            %{--<option>Casual</option>--}%
+                        %{--</select>--}%
+
+                        %{--<select>--}%
+                            %{--<option>Private</option>--}%
+                            %{--<option>Public</option>--}%
+                        %{--</select>--}%
+
+                        %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
+                        %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
+                        %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
+                    %{--</div>--}%
+
+                %{--</div>--}%
+
+                %{--<div style="height: 8rem;">--}%
+                    %{--<div class="topic_details">--}%
+                        %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                             %{--style="height: 5rem; width: 5rem;">--}%
+
+                        %{--<div class="topic_info">--}%
+                            %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
+
+                            %{--<p style="margin:0;">@rcthomas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
+
+                            %{--<p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50--}%
+                            %{--</p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+
+                    %{--<div style="float: right;">--}%
+                        %{--<select>--}%
+                            %{--<option>Serious</option>--}%
+                            %{--<option>Very Serious</option>--}%
+                            %{--<option>Casual</option>--}%
+                        %{--</select>--}%
+
+                        %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
+                    %{--</div>--}%
+                %{--</div>--}%
             </div>
 
         </div>

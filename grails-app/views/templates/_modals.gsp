@@ -13,18 +13,18 @@
             </div>
 
             <div class="modal-body">
-                <form>
+                <g:form controller="topic" action="createTopic" method="post">
                     <label>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="text">
+                    <input type="text" name="name" required>
                     <br>
                     <label>Visibility&nbsp;</label>
-                    <select style="margin-top: 1%;">
-                        <option>Public</option>
-                        <option>Private</option>
+                    <select style="margin-top: 1%;" name="visibility">
+                        <option value="Public">Public</option>
+                        <option value="Private">Private</option>
                     </select>
                     <br>
                     <input class="form_btn" type="submit" value="Create">
-                </form>
+                </g:form>
             </div>
         </div>
     </div>
@@ -40,23 +40,23 @@
             </div>
 
             <div class="modal-body">
-                <form>
+                <g:form controller="topic" action="addDocResource" method="post" enctype="multipart/form-data">
                     <label>Document</label>
-                    <input type="file">
+                    <input type="file" name="doc">
                     <br>
                     <label style="vertical-align: top;">Description</label>
-                    <textarea id="desp" rows="2" cols="35" style="margin-top: 2%;"
+                    <textarea id="desp" name="description" rows="2" cols="35" style="margin-top: 2%;"
                               placeholder="This document is about..."></textarea>
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <select style="margin-top: 1%;">
-                        <option>Topic 1</option>
-                        <option>Topic 2</option>
-                        <option>Topic 3</option>
+                    <select name="topic" style="margin-top: 1%;">
+                        <g:each in="${linksharing.Topic.list()}" var="i">
+                            <option value="${i.name}">${i.name}</option>
+                        </g:each>
                     </select>
                     <br>
                     <input class="form_btn" type="submit" value="Share">
-                </form>
+                </g:form>
             </div>
         </div>
     </div>
@@ -72,23 +72,23 @@
             </div>
 
             <div class="modal-body">
-                <form>
+                <g:form controller="topic" action="addLinkResource" method="post">
                     <label>Link&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="link">
+                    <input type="link" name="url">
                     <br>
                     <label style="vertical-align: top;">Description</label>
-                    <textarea id="desp" rows="2" cols="35" style="margin-top: 2%;"
+                    <textarea id="desp" name="description" rows="2" cols="35" style="margin-top: 2%;"
                               placeholder="This link is about..."></textarea>
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <select style="margin-top: 1%;">
-                        <option>Topic 1</option>
-                        <option>Topic 2</option>
-                        <option>Topic 3</option>
+                    <select name="topic" style="margin-top: 1%;">
+                        <g:each in="${linksharing.Topic.list()}" var="i">
+                            <option value="${i.name}">${i.name}</option>
+                        </g:each>
                     </select>
                     <br>
                     <input class="form_btn" type="submit" value="Share">
-                </form>
+                </g:form>
             </div>
         </div>
     </div>
@@ -110,9 +110,9 @@
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;</label>
                     <select style="margin-top: 1%;">
-                        <option>Topic 1</option>
-                        <option>Topic 2</option>
-                        <option>Topic 3</option>
+                        <g:each in="${linksharing.Topic.list()}" var="i">
+                            <option value="${i.name}">${i.name}</option>
+                        </g:each>
                     </select>
                     <br>
                     <input class="form_btn" type="submit" value="Invite">

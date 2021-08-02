@@ -44,6 +44,14 @@
 <!-- modals -->
 <g:render template="/templates/modals" />
 
+<h3 class="success">${flash.topicSuccess}</h3>
+<h3 class="success">${flash.linkResSuccess}</h3>
+<h3 class="success">${flash.docResSuccess}</h3>
+<h3 class="error">${flash.topicError}</h3>
+<h3 class="error">${flash.linkResError}</h3>
+<h3 class="error">${flash.docResError}</h3>
+
+
 <!-- main area -->
 <div id="main_area">
     <div class="user_info">

@@ -15,11 +15,12 @@ class UserService {
         }else{
             User newUser = new User(params)
             def file = request.getFile('image')
+            String extension = "${file.originalFilename.split("\\.")[-1]}"
 
             if(file && !file.empty) {
-                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${params.userName}.jpg")
+                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${params.userName}.${extension}")
                 file.transferTo(photo)
-                newUser.photo = "/avatars/${params.userName}.jpg"
+                newUser.photo = "/avatars/${params.userName}.${extension}"
             }
 
             newUser.active = true
@@ -60,6 +61,10 @@ class UserService {
         return map
     }
 
+    List subscriptions(User user){
+        return Subscription.findAllBySubscriber(user)
+    }
+
     def profile(Map map){
         if(map.get('currUser').id == map.get('visitingUser').id){
             return "Private Page"
@@ -68,31 +73,40 @@ class UserService {
         }
     }
 
-    def profileUpdate(def request,User user,Map params){
-        File prevPhoto = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.jpg")
+    Map profileUpdate(def request,User user,Map params){
+        Map res = [:]
+
+        File prevPhoto = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/${user.photo}")
         def file = request.getFile('image')
+        String extension = "${file.originalFilename.split("\\.")[-1]}"
 
         String newPhoto
 
         if(prevPhoto == null){
             if(file && !file.empty) {
-                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.jpg")
+                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
                 file.transferTo(photo)
-                newPhoto = "/avatars/${user.userName}.jpg"
+                newPhoto = "/avatars/${user.userName}.${extension}"
             }
         }else{
             if(file && !file.empty) {
-                file.transferTo(prevPhoto)
-                newPhoto = "/avatars/${user.userName}.jpg"
+                prevPhoto.delete()
+                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
+                file.transferTo(photo)
+                newPhoto = "/avatars/${user.userName}.${extension}"
             }else{
-                newPhoto = "/avatars/${user.userName}.jpg"
+                newPhoto = user.photo
             }
         }
 
         Map map = ['email':params.email,'firstName':params.firstName,'lastName':params.lastName,'userName':params.userName, 'photo':newPhoto,'id':user.id]
 
         User.executeUpdate('update User set email=:email, firstName=:firstName, lastName=:lastName, userName=:userName, photo=:photo where id=:id',map)
-        return "Updated Successfully"
+        User modifiedUser = User.findById(user.id)
+
+        res.put('user',modifiedUser)
+        res.put('msg', "Updated Successfully")
+        return res
     }
 
     def passwordUpdate(User user,Map params){

@@ -90,32 +90,23 @@
 
 .settings:hover .settings_opt {display: block;}
 
+
 /* main area */
 #main_area{
     display: flex;
     /*border: 1px solid black;*/
     margin: 2%;
-    height: auto;
+    height: 34rem;
     width: auto;
 }
 
-.user_info{
+.details{
+    /*background: red; */
     height: 100%;
     width: 40%;
-    /*background: red;*/
 }
 
-.user_card{
-    border: 1px solid black;
-    height: 8rem;
-    width: auto;
-    margin: 3% 2% 2% 2%;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.trending_topics,.subscriptions{
+.topic_card,.users_card{
     border: 1px solid black;
     border-radius: 15px 15px 0 0;
     height: 12rem;
@@ -123,7 +114,7 @@
     width: auto;
 }
 
-.topic_details{
+.topic_details,.user_card_details{
     /*border: 0.5px solid black;*/
     height: 6rem;
     width: auto;
@@ -134,10 +125,30 @@
     justify-content: space-around;
 }
 
-.topic_info{
+.topic_info,.user_info{
     /*border: 0.5px solid black;*/
     height: 5rem;
     width: 22rem;
+}
+
+.users_list{
+    margin: 1%;
+    overflow-y: scroll;
+}
+
+.posts{
+    /*background: blue; */
+    height: 100%;
+    width: 60%;
+}
+
+.post_list{
+    margin: 2%;
+    min-height: 15rem;
+    max-height: 32rem;
+    width: auto;
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
 }
 
 .head_box{
@@ -159,29 +170,9 @@
     border-radius: 5px;
 }
 
-.posts_list{
-    margin: 1%;
-    overflow-y: scroll;
-}
-
-.posts{
-    /*background: blue; */
-    height: 100%;
-    width: 60%;
-}
-
-.post_list{
-    margin: 2%;
-    min-height: 15rem;
-    max-height: 32rem;
-    width: auto;
-    border: 1px solid black;
-    border-radius: 15px 15px 0 0;
-}
-
 .related_posts{
     /*border: 1px solid black;*/
-    min-height: 10rem;
+    min-height: 8rem;
     max-height: 26rem;
     width: auto;
     margin: 2%;
@@ -191,7 +182,7 @@
 .post_card{
     /*border: 1px solid black;*/
     width: auto;
-    height: 8rem;
+    height: 6rem;
     margin: 1%;
     display: flex;
     flex-direction: row;
@@ -205,19 +196,12 @@
     margin-left: 2%;
 }
 
-.info{
-    height: 2rem;
-    width: 100%;
-    /*border: 0.5px solid black;*/
-}
-
 .post_card_navigator{
     margin-top: -3%;
     height: 2rem;
     width: 100%;
     /*border: 0.5px solid black;*/
 }
-
 
 /* Additional CSS */
 /* scrollbar */
