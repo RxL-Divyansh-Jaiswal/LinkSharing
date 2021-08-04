@@ -13,7 +13,7 @@
 <body>
 <!-- navbar -->
 <div id="navbar">
-    <a href="#">Link Sharing</a>
+    <g:link controller="home" action="home">Link Sharing</g:link>
 
     <div class="navigator">
         <input type="text" name="search" placeholder="Search...">
@@ -171,22 +171,22 @@
 
             <g:form controller="user" action="registerUser" method="post" enctype="multipart/form-data">
                 <label>First name</label>
-                <input type="text" name="firstName" required style="margin-left: 18%;">
+                <input type="text" name="firstName" placeholder="John" required style="margin-left: 18%;">
                 <br>
                 <label>Last name</label>
-                <input type="text" name="lastName" required style="margin-left: 19%">
+                <input type="text" name="lastName" placeholder="Smith" required style="margin-left: 19%">
                 <br>
                 <label>Email &nbsp; &nbsp; &nbsp;</label>
-                <input type="email" name="email" required style="margin-left: 20.5%">
+                <input type="email" name="email" placeholder="johnSmith@gmail.com" required style="margin-left: 20.5%">
                 <br>
                 <label>Username &nbsp; &nbsp; &nbsp;</label>
-                <input type="text" name="userName" required style="margin-left: 11%">
+                <input type="text" name="userName" placeholder="jSmith" required style="margin-left: 11%">
                 <br>
                 <label style="margin-top: 10px;">Password</label>
-                <input type="password" name="password" required style="margin-left: 21%">
+                <input type="password" name="password" placeholder="(5 - 15 characters)" required style="margin-left: 21%">
                 <br>
                 <label style="margin-top: 10px;">Confirm Password</label>
-                <input type="password" name="cnf_password" required>
+                <input type="password" name="cnf_password" placeholder="(5 - 15 characters)" required>
                 <br>
                 <label style="margin-top: 10px;">Photo</label>
                 <input type="file" name="image">

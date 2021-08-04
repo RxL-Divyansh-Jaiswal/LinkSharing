@@ -21,6 +21,8 @@ class UserService {
                 File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${params.userName}.${extension}")
                 file.transferTo(photo)
                 newUser.photo = "/avatars/${params.userName}.${extension}"
+            }else{
+                newUser.photo = "/avatars/default_Profile.jpg"
             }
 
             newUser.active = true
@@ -82,21 +84,19 @@ class UserService {
 
         String newPhoto
 
-        if(prevPhoto == null){
-            if(file && !file.empty) {
+        if(file && !file.empty) {
+            if(user.photo == "/avatars/default_Profile.jpg"){
+                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
+                file.transferTo(photo)
+                newPhoto = "/avatars/${user.userName}.${extension}"
+            }else{
+                prevPhoto.delete()
                 File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
                 file.transferTo(photo)
                 newPhoto = "/avatars/${user.userName}.${extension}"
             }
         }else{
-            if(file && !file.empty) {
-                prevPhoto.delete()
-                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
-                file.transferTo(photo)
-                newPhoto = "/avatars/${user.userName}.${extension}"
-            }else{
-                newPhoto = user.photo
-            }
+            newPhoto = user.photo
         }
 
         Map map = ['email':params.email,'firstName':params.firstName,'lastName':params.lastName,'userName':params.userName, 'photo':newPhoto,'id':user.id]

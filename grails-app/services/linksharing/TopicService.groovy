@@ -76,6 +76,11 @@ class TopicService {
         }
     }
 
+    def search(String text){
+        List<Topic> topics = Topic.findAllByNameLikeAndVisibility(text,"Public")
+        return topics
+    }
+
     def delete(User user, int id) {
         Topic topic = Topic.findById(id)
 

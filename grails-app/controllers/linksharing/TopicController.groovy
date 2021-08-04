@@ -1,5 +1,9 @@
 package linksharing
 
+import dto.TopicDetailDTO
+import grails.converters.JSON
+import linksharing.enums.Visibility
+
 class TopicController {
 
     def topicService
@@ -46,6 +50,16 @@ class TopicController {
         Topic topic = Topic.findById(params.id)
         List<Resource> resources = Resource.findAllByTopic(topic)
         render(view: "viewTopic", model: [topic: topic,resources: resources])
+    }
+
+    def searchTopics(){
+        List<Topic> detailedTopics = Topic.findAllByNameIlikeAndVisibility("${params.text}%", Visibility.Public)
+        List<TopicDetailDTO> topics = []
+        detailedTopics.each {
+            topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName)
+        }
+
+        render(topics as JSON)
     }
 
     def deleteTopic(int id){
