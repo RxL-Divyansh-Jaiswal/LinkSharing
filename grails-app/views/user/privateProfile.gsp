@@ -6,6 +6,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <asset:stylesheet src="user/privateProfile.css"></asset:stylesheet>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <asset:javascript src="searchTopic.js"></asset:javascript>
+    <script>
+        var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
+    </script>
     <title>PRIVATE PROFILE PAGE</title>
 </head>
 
@@ -17,7 +22,7 @@
     <div class="navigator">
         <ul>
             <li>
-                <input type="text" name="search" placeholder="Search...">
+                <input type="text" id="search_text" name="search" placeholder="Search...">
                 <button id="search_btn">Search</button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
@@ -58,6 +63,7 @@
 
 <h3 class="error">${flash.docResError}</h3>
 
+<div class="search_results"></div>
 
 <!-- main area -->
 <div id="main_area">
@@ -71,7 +77,7 @@
 
                 <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
 
-                <p style="margin: 0;">50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30</p>
+                <p style="margin: 0;">${linksharing.Subscription.findAllBySubscriber(session.user).size()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${linksharing.Topic.findAllByCreatedBy(session.user).size()}</p>
             </div>
         </div>
 
@@ -129,29 +135,8 @@
                             <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
                             <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
                         </div>
-                        %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-                        %{--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
                     </div>
                 </div>
-
-
-
-                %{--<div style="float: right;">--}%
-                %{--<select>--}%
-                %{--<option>Serious</option>--}%
-                %{--<option>Very Serious</option>--}%
-                %{--<option>Casual</option>--}%
-                %{--</select>--}%
-
-                %{--<select>--}%
-                %{--<option>Private</option>--}%
-                %{--<option>Public</option>--}%
-                %{--</select>--}%
-
-                %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
-                %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
-                %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
-                %{--</div>--}%
             </div>
 
         </div>

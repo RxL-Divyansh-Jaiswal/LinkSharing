@@ -49,17 +49,35 @@ class TopicController {
     def viewTopic(){
         Topic topic = Topic.findById(params.id)
         List<Resource> resources = Resource.findAllByTopic(topic)
-        render(view: "viewTopic", model: [topic: topic,resources: resources])
+        List<Subscription> subscriptions = Subscription.findAllByTopic(topic)
+        render(view: "viewTopic", model: [topic: topic,resources: resources, subscriptions: subscriptions])
     }
 
     def searchTopics(){
         List<Topic> detailedTopics = Topic.findAllByNameIlikeAndVisibility("${params.text}%", Visibility.Public)
         List<TopicDetailDTO> topics = []
         detailedTopics.each {
-            topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName)
+          if(Subscription.findByTopicAndSubscriber(it,session.user) != null){
+                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: true)
+            }else{
+                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: false)
+            }
         }
 
         render(topics as JSON)
+    }
+
+    def subscribeTopic(){
+        Subscription subscription = topicService.subscribe(session.user, params.int("id"))
+
+        redirect(uri: request.getHeader('referer'))
+    }
+
+
+    def unsubscribeTopic(){
+        Subscription subscription = topicService.unsubscribe(session.user, params.int("id"))
+
+        redirect(uri: request.getHeader('referer'))
     }
 
     def deleteTopic(int id){

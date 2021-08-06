@@ -1,5 +1,6 @@
 package linksharing
 
+import dto.TopicDetailDTO
 import grails.gorm.transactions.Transactional
 import linksharing.enums.Seriousness
 
@@ -43,9 +44,25 @@ class TopicService {
         try{
             lRes.save(flush:true,failOnError:true)
             relTopic.resources.add(lRes)
+            creator.resources.add(lRes)
+
+            User.list().each{
+                if(it == creator){
+                    ReadingItem readingItem = new ReadingItem(isRead: true, user: it, resource: lRes)
+                    readingItem.save(flush:true)
+                    it.readingItems.add(readingItem)
+                }else{
+                    if(Subscription.findByTopicAndSubscriber(relTopic,it)){
+                        ReadingItem readingItem = new ReadingItem(isRead: false, user: it, resource: lRes)
+                        readingItem.save(flush:true)
+                        it.readingItems.add(readingItem)
+                    }
+                }
+            }
 
             return "Link Resource created and added to list successfully"
         }catch(Exception e){
+            println e
             return "Error in creating link resource"
         }
     }
@@ -69,9 +86,25 @@ class TopicService {
         try{
             dRes.save(flush:true, failOnError: true)
             relTopic.resources.add(dRes)
+            creator.resources.add(dRes)
+
+            User.list().each{
+                if(it == creator){
+                    ReadingItem readingItem = new ReadingItem(isRead: true, user: it, resource: dRes)
+                    readingItem.save(flush:true)
+                    it.readingItems.add(readingItem)
+                }else{
+                    if(Subscription.findByTopicAndSubscriber(relTopic,it)){
+                        ReadingItem readingItem = new ReadingItem(isRead: false, user: it, resource: dRes)
+                        readingItem.save(flush:true)
+                        it.readingItems.add(readingItem)
+                    }
+                }
+            }
 
             return  "Document Resource created and added to list successfully"
         }catch(Exception e){
+            println e
             return "Error in creating document resource"
         }
     }
@@ -79,6 +112,47 @@ class TopicService {
     def search(String text){
         List<Topic> topics = Topic.findAllByNameLikeAndVisibility(text,"Public")
         return topics
+    }
+
+    def subscribe(User user,int id){
+        Topic topic = Topic.findById(id)
+        Subscription subscription = new Subscription(subscriber: user,topic: topic, seriousness: Seriousness.Very_Serious)
+
+        try{
+            subscription.save(flush:true,failOnError:true)
+            topic.subscriptions.add(subscription)
+            return subscription
+        }catch(Exception e){
+            return null
+        }
+    }
+
+    def unsubscribe(User user, int id){
+        Topic topic = Topic.findById(id)
+
+        if(topic.createdBy.id == user.id){
+            return null
+        }else{
+            Subscription temp = Subscription.findByTopicAndSubscriber(topic,user)
+            Subscription.findByTopicAndSubscriber(topic,user).delete()
+            return temp
+        }
+    }
+
+    def trending(User user){
+        List<Topic> topics = Topic.all
+        List<TopicDetailDTO> list = []
+
+        topics.each{
+            if(Subscription.findByTopicAndSubscriber(it,user)){
+                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: true)
+            }else{
+                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: false)
+            }
+
+        }
+
+        return list.sort({ a, b -> a.postCount == b.postCount ? 0 : a.postCount < b.postCount ? 1 : -1 })
     }
 
     def delete(User user, int id) {

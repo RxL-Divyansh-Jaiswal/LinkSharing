@@ -6,6 +6,14 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <asset:stylesheet src="resource/viewResource.css"></asset:stylesheet>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <asset:javascript src="rating.js"></asset:javascript>
+    <asset:javascript src="searchTopic.js"></asset:javascript>
+    <script>
+        var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
+        var rateUrl = "${createLink(controller: 'resource', action: 'rateResource')}"
+    </script>
+
     <title>${resource.topic.name}--Resource</title>
 </head>
 
@@ -17,7 +25,7 @@
     <div class="navigator">
         <ul>
             <li>
-                <input type="text" name="search" placeholder="Search...">
+                <input type="text" id="search_text" name="search" placeholder="Search...">
                 <button id="search_btn">Search</button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
@@ -58,6 +66,8 @@
 
 <h3 class="error">${flash.docResError}</h3>
 
+<div class="search_results"></div>
+
 <!-- main area -->
 <div id="main_area">
     <div class="post">
@@ -77,7 +87,7 @@
                 </div>
             </div>
 
-            <form id="rating-form">
+            <form id="rating-form" action="${resource.id}">
                 <span class="rating-star">
                     <input type="radio" name="rating" value="5"><span class="star"></span>
                     <input type="radio" name="rating" value="4"><span class="star"></span>
@@ -113,96 +123,161 @@
     </div>
 
     <div class="trending_topics">
-        <div class="topics">
+        <div class="topics" style="height: auto">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Trendings Topics</h3>
             </div>
 
-            <div class="topic_details">
-                <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                     style="height: 5rem; width: 5rem;">
+            <div style="min-height: 8rem; max-height: 14rem; overflow-y: scroll">
+                <g:each in="${trendingTopics}" var="i">
+                    <g:if test="${i.isSubscribed}">
+                        <div class="topic_details">
+                            <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
+                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                                 %{--style="height: 5rem; width: 5rem;">--}%
 
-                <div class="topic_info">
-                    <p style="margin: 0;">Uday Pratap Singh<a href="" style="float: right;">Grails</a></p>
+                            <div class="topic_info">
+                                <p style="margin: 0;">${i.creatorName}<g:link controller="topic" action="viewTopic"
+                                                                              id="${i.topicId}" style="float: right;">${i.topicName}</g:link></p>
 
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <div>
-                            <p style="margin-bottom: 0;">@uday</p>
-                            <a href="">Subscribe</a>
+                                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <select>
+                                            <option>Serious</option>
+                                            <option>Very Serious</option>
+                                            <option>Casual</option>
+                                        </select>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Subscriptions</p>
+
+                                        <p>${i.subsCount}</p>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Posts</p>
+
+                                        <p>${i.postCount}</p>
+                                    </div>
+                                </div>
+
+                                <g:if test="${i.creatorUserName == session.user.userName}">
+                                    <p style="float: right; margin: -4% 0 0 0;">
+                                        <select>
+                                            <option>Private</option>
+                                            <option>Public</option>
+                                        </select>
+                                        &nbsp;&nbsp;<a href="">Edit</a>&nbsp;&nbsp;<a href="">Delete</a>
+                                    </p>
+                                </g:if>
+                            </div>
                         </div>
+                    </g:if>
+                    <g:else>
+                        <div class="topic_details">
+                            <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
+                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                                 %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <div>
-                            <p style="margin-bottom: 0;">Subscriptions</p>
+                            <div class="topic_info">
+                                <p style="margin: 0;">${i.creatorName}<g:link controller="topic" action="viewTopic"
+                                                                              id="${i.topicId}" style="float: right;">${i.topicName}</g:link></p>
 
-                            <p>30</p>
+                                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <g:link controller="topic" action="subscribeTopic" id="${i.topicId}">Subscribe</g:link>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Subscriptions</p>
+
+                                        <p>${i.subsCount}</p>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Posts</p>
+
+                                        <p>${i.postCount}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    </g:else>
+                </g:each>
+            </div>
 
-                        <div>
-                            <p style="margin-bottom: 0;">Posts</p>
+            %{--<div class="topic_details">--}%
+                %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                     %{--style="height: 5rem; width: 5rem;">--}%
 
-                            <p>50</p>
-                        </div>
-                    </div>
+                %{--<div class="topic_info">--}%
+                    %{--<p style="margin: 0;">Uday Pratap Singh<a href="" style="float: right;">Grails</a></p>--}%
+
+                    %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">@uday</p>--}%
+                            %{--<a href="">Subscribe</a>--}%
+                        %{--</div>--}%
+
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
+
+                            %{--<p>30</p>--}%
+                        %{--</div>--}%
+
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Posts</p>--}%
+
+                            %{--<p>50</p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
                     %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
                     %{--<p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
-                </div>
-            </div>
+                %{--</div>--}%
+            %{--</div>--}%
 
-            <div class="topic_details">
-                <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                     style="height: 5rem; width: 5rem;">
+            %{--<div class="topic_details">--}%
+                %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                     %{--style="height: 5rem; width: 5rem;">--}%
 
-                <div class="topic_info">
-                    <p style="margin: 0;">Uday Pratap Singh<a href="" style="float: right;">Grails</a></p>
+                %{--<div class="topic_info">--}%
+                    %{--<p style="margin: 0;">Uday Pratap Singh<a href="" style="float: right;">Grails</a></p>--}%
 
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <div>
-                            <p style="margin-bottom: 0;">@rcthomas</p>
-                            <select>
-                                <option>Serious</option>
-                                <option>Very Serious</option>
-                                <option>Casual</option>
-                            </select>
-                        </div>
+                    %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
+                            %{--<select>--}%
+                                %{--<option>Serious</option>--}%
+                                %{--<option>Very Serious</option>--}%
+                                %{--<option>Casual</option>--}%
+                            %{--</select>--}%
+                        %{--</div>--}%
 
-                        <div>
-                            <p style="margin-bottom: 0;">Subscriptions</p>
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
 
-                            <p>30</p>
-                        </div>
+                            %{--<p>30</p>--}%
+                        %{--</div>--}%
 
-                        <div>
-                            <p style="margin-bottom: 0;">Posts</p>
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Posts</p>--}%
 
-                            <p>50</p>
-                        </div>
-                    </div>
+                            %{--<p>50</p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
 
-                    <p style="float: right; margin: -4% 0 0 0;">
-                        <select>
-                            <option>Private</option>
-                            <option>Public</option>
-                        </select>
-                        &nbsp;&nbsp;<a href="">Edit</a>&nbsp;&nbsp;<a href="">Delete</a>
-                    </p>
-                    %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-                    %{--<p>--}%
-                    %{--<select>--}%
-                    %{--<option>Serious</option>--}%
-                    %{--<option>Very Serious</option>--}%
-                    %{--<option>Casual</option>--}%
-                    %{--</select>--}%
-                    %{--&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
-                </div>
-            </div>
-
-            %{--<p style="float: right; margin: -4% 4% 0 0;">--}%
-            %{--<select>--}%
-            %{--<option>Private</option>--}%
-            %{--<option>Public</option>--}%
-            %{--</select>--}%
-            %{--&nbsp;&nbsp;<a href="">Edit</a>&nbsp;&nbsp;<a href="">Delete</a>--}%
-            %{--</p>--}%
+                    %{--<p style="float: right; margin: -4% 0 0 0;">--}%
+                        %{--<select>--}%
+                            %{--<option>Private</option>--}%
+                            %{--<option>Public</option>--}%
+                        %{--</select>--}%
+                        %{--&nbsp;&nbsp;<a href="">Edit</a>&nbsp;&nbsp;<a href="">Delete</a>--}%
+                    %{--</p>--}%
+                %{--</div>--}%
+            %{--</div>--}%
         </div>
     </div>
 </div>

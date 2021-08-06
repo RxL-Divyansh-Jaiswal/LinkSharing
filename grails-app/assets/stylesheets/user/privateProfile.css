@@ -162,6 +162,14 @@
     justify-content: space-around;
 }
 
+.search_results{
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+    margin: 3% 30%;
+    width: auto;
+    height: auto;
+}
+
 .topic_info{
     /*border: 0.5px solid black;*/
     height: 5rem;

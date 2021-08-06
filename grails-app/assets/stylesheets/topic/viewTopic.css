@@ -196,6 +196,14 @@
     margin-left: 2%;
 }
 
+.search_results{
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+    margin: 3% 30%;
+    width: auto;
+    height: auto;
+}
+
 .post_card_navigator{
     margin-top: -3%;
     height: 2rem;

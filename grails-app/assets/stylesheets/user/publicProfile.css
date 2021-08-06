@@ -90,6 +90,7 @@
 
 .settings:hover .settings_opt {display: block;}
 
+
 /* main area */
 #main_area{
     display: flex;
@@ -99,17 +100,27 @@
     width: auto;
 }
 
-.post{
-    /*background: red; */
+.user_info{
     height: 100%;
-    width: 60%;
+    width: 45%;
+    /*background: red;*/
 }
 
-.details{
+.user_card{
     border: 1px solid black;
-    border-radius: 15px;
-    height: 25rem;
+    height: 8rem;
+    width: auto;
     margin: 2%;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.topics,.subscriptions{
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+    height: auto;
+    margin: 3% 2% 2% 2%;
     width: auto;
 }
 
@@ -119,87 +130,6 @@
     margin: 3% 30%;
     width: auto;
     height: auto;
-}
-
-.post_info{
-    /*border: 1px solid black;*/
-    height: 8rem;
-    margin: 2%;
-    width: auto;
-    display: flex;
-    align-items: center;
-}
-
-#rating-form{
-    float: right;
-    margin: -6% 2% 2% 0;
-}
-
-.rating-star {
-    direction: rtl;
-    font-size: 40px;
-    unicode-bidi: bidi-override;
-    display: inline-block;
-}
-.rating-star input {
-    opacity: 0;
-    position: relative;
-    left: -30px;
-    z-index: 2;
-    cursor: pointer;
-}
-.rating-star span.star:before {
-    color: #777777;
-}
-.rating-star span.star {
-    display: inline-block;
-    font-family: FontAwesome;
-    font-style: normal;
-    font-weight: normal;
-    position: relative;
-    z-index: 1;
-}
-.rating-star span {
-    margin-left: -30px;
-}
-.rating-star span.star:before {
-    color: #777777;
-    content:"\f006";
-}
-.rating-star input:hover + span.star:before, .rating-star input:hover + span.star ~ span.star:before, .rating-star input:checked + span.star:before, .rating-star input:checked + span.star ~ span.star:before {
-    color: #ffd100;
-    content:"\f005";
-}
-
-.selected-rating{
-    color: #ffd100;
-    font-weight: bold;
-    font-size: 42px;
-}
-
-.post_content{
-    margin: 7% 2% 2% 2%;
-}
-
-.post_navigator{
-    margin: 2%;
-    height: 2rem;
-    width: auto;
-    /*border: 0.5px solid black;*/
-}
-
-.trending_topics{
-    /*background: blue; */
-    height: 100%;
-    width: 40%;
-}
-
-.topics{
-    border: 1px solid black;
-    border-radius: 15px 15px 0 0;
-    height: 18rem;
-    margin: 3% 2% 2% 2%;
-    width: auto;
 }
 
 .head_box{
@@ -214,21 +144,85 @@
     vertical-align: text-top;
 }
 
-.topic_details{
-    /*border: 0.5px solid black;*/
+.head_box .topic_search_btn{
+    border: none;
+    background: white;
+    color: cornflowerblue;
+    border-radius: 5px;
+}
+
+.topics_list,.subscriptions_list{
+    min-height: 8rem;
+    max-height: 14rem;
+    overflow-y: scroll;
+}
+
+.topic_card{
+    border-bottom: 1px solid black;
     height: 6rem;
     width: auto;
     margin: 2%;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-around;
+    justify-content: space-between;
 }
 
-.topic_info{
+.inner_info{
+    margin-right: 2%;
+    width: 12rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.posts{
+    /*background: blue; */
+    height: 100%;
+    width: 55%;
+}
+
+.post_search_btn{
+    border: none;
+    background: white;
+    color: cornflowerblue;
+    border-radius: 5px;
+}
+
+.post_list{
+    margin: 2%;
+    min-height: 15rem;
+    max-height: 32rem;
+    width: auto;
+    border: 1px solid black;
+    border-radius: 15px 15px 0 0;
+}
+
+.related_posts{
+    /*border: 1px solid black;*/
+    min-height: 8rem;
+    max-height: 26rem;
+    width: auto;
+    margin: 2%;
+    overflow-y: scroll;
+}
+
+.post_card{
+    border-bottom: 1px solid black;
+    margin-top: 1%;
+}
+
+.post_card_details{
     /*border: 0.5px solid black;*/
     height: 5rem;
-    width: 22rem;
+    width: 35rem;
+    /*margin-left: 2%;*/
+}
+
+.post_card_navigator{
+    margin-top: -3%;
+    height: 2rem;
+    width: 100%;
+    /*border: 0.5px solid black;*/
 }
 
 /* Additional CSS */
@@ -246,18 +240,4 @@
 ::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgb(253 251 251);
-}
-
-.success{
-    margin-top: 2%;
-    font-size: 1rem;
-    text-align: center;
-    color: green;
-}
-
-.error{
-    margin-top: 2%;
-    font-size: 1rem;
-    text-align: center;
-    color: red;
 }

@@ -6,6 +6,11 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <asset:stylesheet src="topic/viewTopic.css"></asset:stylesheet>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <asset:javascript src="searchTopic.js"></asset:javascript>
+    <script>
+        var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
+    </script>
     <title>${topic.name}</title>
 </head>
 
@@ -17,7 +22,7 @@
     <div class="navigator">
         <ul>
             <li>
-                <input type="text" name="search" placeholder="Search...">
+                <input type="text" id="search_text" name="search" placeholder="Search...">
                 <button id="search_btn">Search</button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
@@ -58,6 +63,8 @@
 
 <h3 class="error">${flash.docResError}</h3>
 
+<div class="search_results"></div>
+
 <!-- main area -->
 <div id="main_area">
     <div class="details">
@@ -68,7 +75,6 @@
 
             <div class="topic_details">
                 <asset:image src="${topic.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
-                %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 5rem; width: 5rem;">--}%
                 <div class="topic_info">
                     <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
                                                   id="${topic.id}">${topic.name}</g:link>&nbsp;&nbsp;(${topic.visibility})</p>
@@ -76,23 +82,27 @@
                     <div style="display: flex; flex-direction: row; justify-content: space-between;">
                         <div>
                             <p style="margin-bottom: 0;">@${topic.createdBy.userName}</p>
-                            <a href="">Subscribe</a>
+                            <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user)}">
+                                <g:link controller="topic" action="unsubscribeTopic" id="${topic.id}">Unsubscribe</g:link>
+                            </g:if>
+                            <g:else>
+                                <g:link controller="topic" action="subscribeTopic" id="${topic.id}">Subscribe</g:link>
+                            </g:else>
+
                         </div>
 
                         <div>
                             <p style="margin-bottom: 0;">Subscriptions</p>
 
-                            <p>30</p>
+                            <p>${subscriptions.size()}</p>
                         </div>
 
                         <div>
                             <p style="margin-bottom: 0;">Posts</p>
 
-                            <p>50</p>
+                            <p>${resources.size()}</p>
                         </div>
                     </div>
-                    %{--<p style="margin:0;">@${topic.createdBy.userName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-                    %{--<p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
                 </div>
             </div>
 
@@ -107,41 +117,27 @@
             </div>
         </div>
 
-        <div class="users_card" style="height: 18rem;">
+        <div class="users_card" style="height: auto;">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Users: "${topic.name}"</h3>
             </div>
 
-            <div class="users_list">
-                <div class="user_card_details">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
+            <div class="users_list" style="min-height: 8rem; max-height: 14rem">
+                <g:each in="${subscriptions}" var="s">
+                    <div class="user_card_details">
+                        <asset:image src="${s.subscriber.photo}" style="height: 5rem; width: 5rem;"></asset:image>
 
-                    <div class="user_info">
-                        <p style="margin: -1% 0 0 0;">Uday Pratap Singh</p>
+                        <div class="user_info">
+                            <p style="margin: -1% 0 0 0;">${s.subscriber.name}</p>
 
-                        <p style="margin: 0;">@uday</p>
+                            <p style="margin: 0;">@${s.subscriber.userName}</p>
 
-                        <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
+                            <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
 
-                        <p>30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>
+                            <p>${s.subscriber.subscriptions.size()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${s.subscriber.topics.size()}</p>
+                        </div>
                     </div>
-                </div>
-
-                <div class="user_card_details">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
-
-                    <div class="user_info">
-                        <p style="margin: -1% 0 0 0;">Uday Pratap Singh</p>
-
-                        <p style="margin: 0;">@uday</p>
-
-                        <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
-
-                        <p>30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>
-                    </div>
-                </div>
+                </g:each>
             </div>
         </div>
     </div>
@@ -161,15 +157,11 @@
                 <g:each in="${resources}" var="i">
                     <div class="post_card">
                         <asset:image src="${i.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
-                        %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 5rem; width: 5rem;">--}%
                         <div class="post_card_details">
                             <g:if test="${i.description.length() > 120}">
                                 <p>${i.description.substring(0, 120)}...</p>
                             </g:if>
                             <g:else><p>${i.description}</p></g:else>
-                        %{--<p>--}%
-                        %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-                        %{--</p>--}%
 
                             <div class="post_card_navigator">
                                 <p style="float: left; margin: 0">
@@ -199,37 +191,6 @@
                     </div>
 
                 </g:each>
-            %{--<div class="post_card">--}%
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 5rem; width: 5rem;">--}%
-            %{--<div class="post_card_details">--}%
-            %{--<p>--}%
-            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-            %{--</p>--}%
-
-            %{--<div class="post_card_navigator">--}%
-            %{--<p style="float: left; margin: 0">--}%
-            %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i></a>--}%
-            %{--</p>--}%
-            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a href="">View Post</a></p>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-
-            %{--<div class="post_card">--}%
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 5rem; width: 5rem;">--}%
-            %{--<div class="post_card_details">--}%
-            %{--<p>--}%
-            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-            %{--</p>--}%
-
-            %{--<div class="post_card_navigator">--}%
-            %{--<p style="float: left; margin: 0">--}%
-            %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i></a>--}%
-            %{--</p>--}%
-            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a href="">View Post</a></p>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-            %{--</div>--}%
             </div>
         </div>
     </div>

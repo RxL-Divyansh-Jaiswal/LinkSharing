@@ -3,16 +3,28 @@ package linksharing
 class UserController {
 
     def userService
+    def topicService
 
     def index() { }
 
     def dashboard(){
         List<Subscription> subscriptions = userService.subscriptions(session.user)
-        render(view: 'dashboard', model: [subscriptions: subscriptions])
+        List trendingTopics = topicService.trending(session.user)
+        List<Resource> resources = Resource.all
+        render(view: 'dashboard', model: [subscriptions: subscriptions, resources: resources, treandingTopics: trendingTopics])
     }
 
     def privateProfile(){
         render(view: 'privateProfile')
+    }
+
+    def publicProfile(){
+        User u = User.findById(params.int("id"))
+        List<Topic> topics = Topic.findAllByCreatedBy(u)
+        List<Subscription> subscriptions = Subscription.findAllBySubscriber(u)
+        List<Resource> resources = Resource.findAllByCreatedBy(u)
+
+        render(view: "publicProfile", model: [user: u,topics:topics, subscriptions: subscriptions, resources: resources])
     }
 
     def registerUser(){
@@ -45,7 +57,11 @@ class UserController {
         Map map = ['currUser':session.user,'visitingUser':visiting]
         String msg = userService.profile(map)
 
-        redirect(action: "privateProfile")
+        if(msg == "Private Page"){
+            redirect(action: "privateProfile")
+        }else{
+            redirect(action: "publicProfile", id: visiting.id)
+        }
     }
 
     def updateProfile(){

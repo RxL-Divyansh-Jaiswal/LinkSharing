@@ -8,8 +8,10 @@
     <asset:stylesheet src="user/dashboard.css"></asset:stylesheet>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <asset:javascript src="searchTopic.js"></asset:javascript>
+    <asset:javascript src="readItem.js"></asset:javascript>
     <script>
         var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
+        var readUrl = "${createLink(controller: 'resource', action: 'markRead')}"
     </script>
 
     <title>DASHBOARD</title>
@@ -66,38 +68,12 @@
 
 <h3 class="error">${flash.docResError}</h3>
 
-<div class="search_results">
-    %{--<div class="head_box">--}%
-        %{--<h3 style="margin: 0 2%; display: inline-block;">Search results for "Gr"</h3>--}%
-    %{--</div>--}%
-
-    %{--<div class="topic_details">--}%
-        %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 5rem; width: 5rem;">--}%
-        %{--<div class="topic_info">--}%
-            %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
-            %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
-                %{--<div>--}%
-                    %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
-                    %{--<a href="">Subscribe</a>--}%
-                %{--</div>--}%
-                %{--<div>--}%
-                    %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
-                    %{--<p>30</p>--}%
-                %{--</div>--}%
-                %{--<div>--}%
-                    %{--<p style="margin-bottom: 0;">Posts</p>--}%
-                    %{--<p>50</p>--}%
-                %{--</div>--}%
-            %{--</div>--}%
-        %{--</div>--}%
-    %{--</div>--}%
-</div>
+<div class="search_results"></div>
 
 <!-- main area -->
 <div id="main_area">
     <div class="user_info">
         <div class="user_card">
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 6rem; width: 6rem;">--}%
             <asset:image src="${session.user.photo}" style="height: 6rem; width: 6rem; margin-left: 1%;"></asset:image>
             <div style="margin-left: 1%;">
                 <p style="margin: 0;">${session.user.name}</p>
@@ -106,7 +82,7 @@
 
                 <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
 
-                <p style="margin: 0;">50&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30</p>
+                <p id="data" style="margin: 0;">${subscriptions.size()}&nbsp&nbsp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${linksharing.Topic.findAllByCreatedBy(session.user).size()}</p>
             </div>
         </div>
 
@@ -121,8 +97,6 @@
                         <div class="topic_details">
                             <asset:image src="${i.topic.createdBy.photo}"
                                          style="height: 5rem; width: 5rem;"></asset:image>
-                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                            %{--style="height: 5rem; width: 5rem;">--}%
 
                             <div class="topic_info">
                                 <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
@@ -131,24 +105,23 @@
                                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                     <div>
                                         <p style="margin-bottom: 0;">@${i.topic.createdBy.userName}</p>
-                                        <a href="">Subscribe</a>
+                                        <g:if test="${i.topic.createdBy.id != session.user.id}">
+                                            <g:link controller="topic" action="unsubscribeTopic" id="${i.topic.id}">Unsubscribe</g:link>
+                                        </g:if>
                                     </div>
 
                                     <div>
                                         <p style="margin-bottom: 0;">Subscriptions</p>
 
-                                        <p>30</p>
+                                        <p>${i.topic.subscriptions.size()}</p>
                                     </div>
 
                                     <div>
                                         <p style="margin-bottom: 0;">Posts</p>
 
-                                        <p>50</p>
+                                        <p>${i.topic.resources.size()}</p>
                                     </div>
                                 </div>
-                                %{--<p style="margin:0;">@${i.topic.createdBy.userName}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-
-                                %{--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
                             </div>
                         </div>
 
@@ -172,175 +145,175 @@
 
                     </div>
                 </g:each>
-            %{--<div style="height: 8rem;">--}%
-            %{--<div class="topic_details">--}%
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-            %{--style="height: 5rem; width: 5rem;">--}%
-
-            %{--<div class="topic_info">--}%
-            %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
-
-            %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-
-            %{--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-
-            %{--<div style="float: right;">--}%
-            %{--<select>--}%
-            %{--<option>Serious</option>--}%
-            %{--<option>Very Serious</option>--}%
-            %{--<option>Casual</option>--}%
-            %{--</select>--}%
-
-            %{--<select>--}%
-            %{--<option>Private</option>--}%
-            %{--<option>Public</option>--}%
-            %{--</select>--}%
-
-            %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
-            %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
-            %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
-            %{--</div>--}%
-
-            %{--</div>--}%
-
-            %{--<div style="height: 8rem;">--}%
-            %{--<div class="topic_details">--}%
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-            %{--style="height: 5rem; width: 5rem;">--}%
-
-            %{--<div class="topic_info">--}%
-            %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
-
-            %{--<p style="margin:0;">@rcthomas&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-
-            %{--<p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50--}%
-            %{--</p>--}%
-            %{--</div>--}%
-            %{--</div>--}%
-
-            %{--<div style="float: right;">--}%
-            %{--<select>--}%
-            %{--<option>Serious</option>--}%
-            %{--<option>Very Serious</option>--}%
-            %{--<option>Casual</option>--}%
-            %{--</select>--}%
-
-            %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
-            %{--</div>--}%
-            %{--</div>--}%
             </div>
 
         </div>
 
-        <div class="trending_topics" style="height: 20rem;">
+        <div class="trending_topics" style="height: auto;">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Trendings Topics</h3>
             </div>
 
-            <div class="topic_details">
-                <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                     style="height: 5rem; width: 5rem;">
+            <div style="min-height: 8rem; max-height: 14rem; overflow-y: scroll">
+                <g:each in="${treandingTopics}" var="i">
+                    <g:if test="${i.isSubscribed}">
+                        <div class="topic_details" style="margin-bottom: 8%;">
+                            <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
+                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                                 %{--style="height: 5rem; width: 5rem;">--}%
 
-                <div class="topic_info">
-                    <p style="margin: 0;"><a href="">Grails</a></p>
+                            <div class="topic_info">
+                                <input type="text" placeholder="${i.topicName}">
+                                <button>Save</button>
 
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <div>
-                            <p style="margin-bottom: 0;">@rcthomas</p>
-                            <a href="">Subscribe</a>
+                                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <g:link controller="topic" action="unsubscribeTopic" id="${i.topicId}">Unsubscribe</g:link>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Subscriptions</p>
+
+                                        <p>${i.subsCount}</p>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Posts</p>
+
+                                        <p>${i.postCount}</p>
+                                    </div>
+                                </div>
+
+                                <div style="float: right;">
+                                    <select>
+                                        <option>Serious</option>
+                                        <option>Very Serious</option>
+                                        <option>Casual</option>
+                                    </select>
+
+                                    <select>
+                                        <option>Private</option>
+                                        <option>Public</option>
+                                    </select>
+
+                                    <button style="background: transparent; border: none;"><i class="far fa-envelope"></i>
+                                    </button>
+                                    <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
+                                    <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
                         </div>
+                    </g:if>
+                    <g:else>
+                        <div class="topic_details" style="margin-bottom: 8%;">
+                            <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
+                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                                 %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <div>
-                            <p style="margin-bottom: 0;">Subscriptions</p>
+                            <div class="topic_info">
+                                <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
+                                                              id="${i.topicId}">${i.topicName}</g:link></p>
 
-                            <p>30</p>
+                                <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                    <div>
+                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <g:link controller="topic" action="subscribeTopic" id="${i.topicId}">Subscribe</g:link>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Subscriptions</p>
+
+                                        <p>${i.subsCount}</p>
+                                    </div>
+
+                                    <div>
+                                        <p style="margin-bottom: 0;">Posts</p>
+
+                                        <p>${i.postCount}</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
-                        <div>
-                            <p style="margin-bottom: 0;">Posts</p>
-
-                            <p>50</p>
-                        </div>
-                    </div>
-                    %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-
-                    %{--<p><a href="">Subscribe</a>&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50--}%
-                    %{--</p>--}%
-                </div>
+                    </g:else>
+                </g:each>
             </div>
 
-            <div>
-                <div class="topic_details">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
 
-                    <div class="topic_info">
-                        <input type="text" placeholder="Grails">
-                        <button>Save</button>
+            %{--<div class="topic_details">--}%
+                %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                     %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                            <div>
-                                <p style="margin-bottom: 0;">@rcthomas</p>
-                                <a href="">Subscribe</a>
-                            </div>
+                %{--<div class="topic_info">--}%
+                    %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
 
-                            <div>
-                                <p style="margin-bottom: 0;">Subscriptions</p>
+                    %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
+                            %{--<a href="">Subscribe</a>--}%
+                        %{--</div>--}%
 
-                                <p>30</p>
-                            </div>
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
 
-                            <div>
-                                <p style="margin-bottom: 0;">Posts</p>
+                            %{--<p>30</p>--}%
+                        %{--</div>--}%
 
-                                <p>50</p>
-                            </div>
-                        </div>
+                        %{--<div>--}%
+                            %{--<p style="margin-bottom: 0;">Posts</p>--}%
 
-                        <div style="float: right;">
-                            <select>
-                                <option>Serious</option>
-                                <option>Very Serious</option>
-                                <option>Casual</option>
-                            </select>
-
-                            <select>
-                                <option>Private</option>
-                                <option>Public</option>
-                            </select>
-
-                            <button style="background: transparent; border: none;"><i class="far fa-envelope"></i>
-                            </button>
-                            <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
-                            <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
-                        </div>
-
-                        %{--<p style="margin:0;">@uday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Posts</p>--}%
-
-                        %{--<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;30&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;50</p>--}%
-                    </div>
-                </div>
-
-
-                %{--<div style="float: right;">--}%
-                %{--<select>--}%
-                %{--<option>Serious</option>--}%
-                %{--<option>Very Serious</option>--}%
-                %{--<option>Casual</option>--}%
-                %{--</select>--}%
-
-                %{--<select>--}%
-                %{--<option>Private</option>--}%
-                %{--<option>Public</option>--}%
-                %{--</select>--}%
-
-                %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>--}%
-                %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
-                %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
+                            %{--<p>50</p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
                 %{--</div>--}%
-            </div>
+            %{--</div>--}%
+
+                %{--<div class="topic_details">--}%
+                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                         %{--style="height: 5rem; width: 5rem;">--}%
+
+                    %{--<div class="topic_info">--}%
+                        %{--<input type="text" placeholder="Grails">--}%
+                        %{--<button>Save</button>--}%
+
+                        %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
+                            %{--<div>--}%
+                                %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
+                                %{--<a href="">Subscribe</a>--}%
+                            %{--</div>--}%
+
+                            %{--<div>--}%
+                                %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
+
+                                %{--<p>30</p>--}%
+                            %{--</div>--}%
+
+                            %{--<div>--}%
+                                %{--<p style="margin-bottom: 0;">Posts</p>--}%
+
+                                %{--<p>50</p>--}%
+                            %{--</div>--}%
+                        %{--</div>--}%
+
+                        %{--<div style="float: right;">--}%
+                            %{--<select>--}%
+                                %{--<option>Serious</option>--}%
+                                %{--<option>Very Serious</option>--}%
+                                %{--<option>Casual</option>--}%
+                            %{--</select>--}%
+
+                            %{--<select>--}%
+                                %{--<option>Private</option>--}%
+                                %{--<option>Public</option>--}%
+                            %{--</select>--}%
+
+                            %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i>--}%
+                            %{--</button>--}%
+                            %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
+                            %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+                %{--</div>--}%
 
         </div>
     </div>
@@ -357,63 +330,108 @@
             </div>
 
             <div class="related_posts">
-                <div class="post_card">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
+                <g:each in="${resources}" var="i">
+                    <g:if test="${linksharing.ReadingItem.findByUserAndResource(session.user,i) && !linksharing.ReadingItem.findByUserAndResource(session.user,i).isRead}">
+                        <div class="post_card">
+                            <asset:image src="${i.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
 
-                    <div class="post_card_details">
-                        <div class="info">
-                            <p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>
+                            <div class="post_card_details">
+                                <div class="info">
+                                    <p style="float: left; margin: 0;">${i.createdBy.name} &nbsp; @${i.createdBy.userName}</p>
 
-                            <p style="float: right; margin: 0;"><a href="">Grails</a></p>
+                                    <p style="float: right; margin: 0;"><g:link controller="topic" action="viewTopic"
+                                                                                id="${i.topic.id}">${i.topic.name}</g:link></p>
+                                </div>
+
+                            <g:if test="${i.description.length() > 120}">
+                                <p>${i.description.substring(0, 120)}...</p>
+                            </g:if>
+                            <g:else><p>${i.description}</p></g:else>
+
+                                %{--<p>--}%
+                                    %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
+                                %{--</p>--}%
+
+                                <div class="post_card_navigator">
+                                    <p style="float: left; margin: 0">
+                                        <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
+                                            class="fab fa-twitter"></i></a> &nbsp; <a href=""><i
+                                            class="fab fa-google-plus-g"></i></a>
+                                    </p>
+                                    <g:if test="${i.class == linksharing.DocumentResource}">
+                                        <p style="float: right; margin: 0;"><g:link controller="resource" action="download"
+                                                                                    id="${i.id}">Download</g:link>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
+                                                                                                                                                                             action="viewResource"
+                                                                                                                                                                             id="${i.id}">View Post</g:link></p>
+                                    </g:if>
+                                    <g:else>
+                                        <p style="float: right; margin: 0;"><a
+                                                href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
+                                                                                                                                                             action="viewResource"
+                                                                                                                                                             id="${i.id}">View Post</g:link></p>
+                                        </div>
+                                    </g:else>
+                            </div>
                         </div>
+                    </g:if>
+                </g:each>
+                %{--<div class="post_card">--}%
+                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                         %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
+                    %{--<div class="post_card_details">--}%
+                        %{--<div class="info">--}%
+                            %{--<p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>--}%
 
-                        <div class="post_card_navigator">
-                            <p style="float: left; margin: 0">
-                                <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-twitter"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-google-plus-g"></i></a>
-                            </p>
+                            %{--<p style="float: right; margin: 0;"><a href="">Grails</a></p>--}%
+                        %{--</div>--}%
 
-                            <p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a
-                                    href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a
-                                    href="">View Post</a></p>
-                        </div>
-                    </div>
-                </div>
+                        %{--<p>--}%
+                            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
+                        %{--</p>--}%
 
-                <div class="post_card">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
+                        %{--<div class="post_card_navigator">--}%
+                            %{--<p style="float: left; margin: 0">--}%
+                                %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i--}%
+                                    %{--class="fab fa-twitter"></i></a> &nbsp; <a href=""><i--}%
+                                    %{--class="fab fa-google-plus-g"></i></a>--}%
+                            %{--</p>--}%
 
-                    <div class="post_card_details">
-                        <div class="info">
-                            <p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>
+                            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a--}%
+                                    %{--href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a--}%
+                                    %{--href="">View Post</a></p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+                %{--</div>--}%
 
-                            <p style="float: right; margin: 0;"><a href="">Grails</a></p>
-                        </div>
+                %{--<div class="post_card">--}%
+                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
+                         %{--style="height: 5rem; width: 5rem;">--}%
 
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
+                    %{--<div class="post_card_details">--}%
+                        %{--<div class="info">--}%
+                            %{--<p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>--}%
 
-                        <div class="post_card_navigator">
-                            <p style="float: left; margin: 0">
-                                <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-twitter"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-google-plus-g"></i></a>
-                            </p>
+                            %{--<p style="float: right; margin: 0;"><a href="">Grails</a></p>--}%
+                        %{--</div>--}%
 
-                            <p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a
-                                    href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a
-                                    href="">View Post</a></p>
-                        </div>
-                    </div>
-                </div>
+                        %{--<p>--}%
+                            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
+                        %{--</p>--}%
+
+                        %{--<div class="post_card_navigator">--}%
+                            %{--<p style="float: left; margin: 0">--}%
+                                %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i--}%
+                                    %{--class="fab fa-twitter"></i></a> &nbsp; <a href=""><i--}%
+                                    %{--class="fab fa-google-plus-g"></i></a>--}%
+                            %{--</p>--}%
+
+                            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a--}%
+                                    %{--href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a--}%
+                                    %{--href="">View Post</a></p>--}%
+                        %{--</div>--}%
+                    %{--</div>--}%
+                %{--</div>--}%
             </div>
         </div>
     </div>
