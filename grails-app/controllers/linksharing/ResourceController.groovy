@@ -1,5 +1,6 @@
 package linksharing
 
+import dto.PostDetailsDTO
 import grails.converters.JSON
 
 class ResourceController {
@@ -49,6 +50,32 @@ class ResourceController {
 
         List<String> list = []
         list << msg
+        render(list as JSON)
+    }
+
+    def recentShares(){
+        List<Resource> resources = Resource.all
+        List<PostDetailsDTO> list = []
+
+        resources.each {
+            def duration = groovy.time.TimeCategory.minus(new Date(), it.dateCreated)
+            list << new PostDetailsDTO(creatorPhoto: it.createdBy.photo,creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, topicName: it.topic.name, description: it.description, minsPassed: duration.minutes)
+        }
+
+        list.sort({ a, b -> a.minsPassed == b.minsPassed ? 0 : a.minsPassed < b.minsPassed ? -1 : 1 })
+
+        render(list as JSON)
+    }
+
+    def topPosts(){
+        List posts = resourceService.top()
+        List<PostDetailsDTO> list = []
+
+        posts.each{
+            def duration = groovy.time.TimeCategory.minus(new Date(), it[1].dateCreated)
+            list << new PostDetailsDTO(creatorPhoto: it[1].createdBy.photo,creatorName: it[1].createdBy.name, creatorUserName: it[1].createdBy.userName, topicName: it[1].topic.name, description: it[1].description, minsPassed: duration.minutes)
+        }
+
         render(list as JSON)
     }
 }

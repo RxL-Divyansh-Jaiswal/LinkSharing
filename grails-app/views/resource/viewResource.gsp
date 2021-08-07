@@ -40,10 +40,15 @@
                     <button class="settings_btn" style="font-size: 1.5rem;">${session.user.userName}</button>
 
                     <div class="settings_opt">
-                        <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
-                        <a href="">Topics</a>
-                        <a href="">Posts</a>
-                        <g:link controller="user" action="logout">Logout</g:link>
+                        <g:if test="${session.user.admin}">
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="allUsers">Users</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:if>
+                        <g:else>
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:else>
                     </div>
                 </div>
             </li>
@@ -81,7 +86,7 @@
                                                                               id="${resource.topic.id}"
                                                                               style="float: right;">${resource.topic.name}</g:link></p>
 
-                    <p style="margin: 1%">@${resource.createdBy.userName} <span
+                    <p style="margin: 1%"><g:link controller="user" action="getProfile" id="${resource.topic.createdBy.id}" style="text-decoration: none; color: darkred;">@${resource.topic.createdBy.userName}</g:link> <span
                             style="float: right;">${resource.dateCreated.toString().substring(11, 13)}:${resource.dateCreated.toString().substring(14, 16)} ${hourMap.get(resource.dateCreated.toString().substring(11, 13))} ${resource.dateCreated.toString().substring(8, 10)} ${monthMap.get(resource.dateCreated.toString().substring(5, 7))} ${resource.dateCreated.toString().substring(0, 4)}</span>
                     </p>
                 </div>
@@ -142,7 +147,7 @@
 
                                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                     <div>
-                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${i.creatorId}" style="text-decoration: none; color: darkred;">@${i.creatorUserName}</g:link></p>
                                         <select>
                                             <option>Serious</option>
                                             <option>Very Serious</option>

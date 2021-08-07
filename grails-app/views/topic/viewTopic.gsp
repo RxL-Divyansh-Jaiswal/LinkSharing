@@ -37,10 +37,15 @@
                     <button class="settings_btn" style="font-size: 1.5rem;">${session.user.userName}</button>
 
                     <div class="settings_opt">
-                        <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
-                        <a href="">Topics</a>
-                        <a href="">Posts</a>
-                        <g:link controller="user" action="logout">Logout</g:link>
+                        <g:if test="${session.user.admin}">
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="allUsers">Users</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:if>
+                        <g:else>
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:else>
                     </div>
                 </div>
             </li>
@@ -81,7 +86,7 @@
 
                     <div style="display: flex; flex-direction: row; justify-content: space-between;">
                         <div>
-                            <p style="margin-bottom: 0;">@${topic.createdBy.userName}</p>
+                            <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${topic.createdBy.id}" style="text-decoration: none; color: darkred;">@${topic.createdBy.userName}</g:link></p>
                             <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user)}">
                                 <g:link controller="topic" action="unsubscribeTopic" id="${topic.id}">Unsubscribe</g:link>
                             </g:if>
@@ -130,7 +135,7 @@
                         <div class="user_info">
                             <p style="margin: -1% 0 0 0;">${s.subscriber.name}</p>
 
-                            <p style="margin: 0;">@${s.subscriber.userName}</p>
+                            <p style="margin: 0;"><g:link controller="user" action="getProfile" id="${s.subscriber.id}" style="text-decoration: none; color: darkred;">@${s.subscriber.userName}</g:link></p>
 
                             <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
 

@@ -145,9 +145,9 @@ class TopicService {
 
         topics.each{
             if(Subscription.findByTopicAndSubscriber(it,user)){
-                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: true)
+                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: true)
             }else{
-                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: false)
+                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id,creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: false)
             }
 
         }

@@ -1,6 +1,9 @@
 package linksharing
 
 import grails.gorm.transactions.Transactional
+import org.grails.datastore.mapping.query.Projections
+import org.hibernate.criterion.AvgProjection
+import org.hibernate.criterion.Projection
 
 @Transactional
 class ResourceService {
@@ -41,5 +44,16 @@ class ResourceService {
 
             return "Resource rated"
         }
+    }
+
+    def top(){
+        List<ResourceRating> list = ResourceRating.createCriteria().list {
+            projections{
+                avg("score")
+            }
+            groupProperty("resource")
+        }
+
+        list.sort({ a, b -> a[0] == b[0] ? 0 : a[0] < b[0] ? 1 : -1 })
     }
 }

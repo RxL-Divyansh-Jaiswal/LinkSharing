@@ -22,7 +22,7 @@ $(document).ready(function () {
                             '            <p style="margin: 0;"><a href="/topic/viewTopic/'+ item.topicId +'">' + item.topicName + '</a></p>\n' +
                             '            <div style="display: flex; flex-direction: row; justify-content: space-between;">\n' +
                             '                <div>\n' +
-                            '                    <p style="margin-bottom: 0;">@' + item.creatorUserName + '</p>\n' +
+                            '                    <p style="margin-bottom: 0;"><a href="/user/getProfile/'+ item.creatorId +'" style="text-decoration: none; color: darkred;">@' +item.creatorUserName+ '</a></p>\n' +
                             '                    <a href="/topic/unsubscribeTopic/'+item.topicId+'">Unsubscribe</a>\n' +
                             '                </div>\n' +
                             '                <div>\n' +

@@ -44,7 +44,7 @@
     /*border: 1px solid black;*/
     margin-top: 1%;
     display: flex;
-    height: 40rem;
+    height: auto;
     width: 100%;
 }
 
@@ -59,7 +59,7 @@
 .recent{
     border: 1px solid black;
     border-radius: 15px 15px 0 0;
-    height: 20rem;
+    height: auto;
     width: auto;
     margin: 2% 5%;
 }
@@ -67,7 +67,7 @@
 .tops{
     border: 1px solid black;
     border-radius: 15px 15px 0 0;
-    height: 12rem;
+    height: auto;
     width: auto;
     margin: 2% 5%;
 }

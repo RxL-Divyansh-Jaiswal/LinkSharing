@@ -11,7 +11,7 @@ class UserController {
         List<Subscription> subscriptions = userService.subscriptions(session.user)
         List trendingTopics = topicService.trending(session.user)
         List<Resource> resources = Resource.all
-        render(view: 'dashboard', model: [subscriptions: subscriptions, resources: resources, treandingTopics: trendingTopics])
+        render(view: 'dashboard', model: [subscriptions: subscriptions, resources: resources, trendingTopics: trendingTopics])
     }
 
     def privateProfile(){
@@ -53,7 +53,7 @@ class UserController {
     }
 
     def getProfile(){
-        User visiting = User.findById(params.id)
+        User visiting = User.findById(params.int("id"))
         Map map = ['currUser':session.user,'visitingUser':visiting]
         String msg = userService.profile(map)
 
@@ -89,11 +89,29 @@ class UserController {
         redirect url: "/"
     }
 
+
+    def allUsers(){
+        List users = User.all
+        render(view: "allUsers", model: [users: users])
+    }
+
     def activateUser(int id){
-        return userService.activate(id)
+        String msg =  userService.activate(id)
+
+        if(msg.split(" ")[0] == "User"){
+            flash.statusMsg = msg
+        }
+
+        redirect(uri: request.getHeader('referer'))
     }
 
     def deactivateUser(int id){
-        return userService.deactivate(id)
+        String msg = userService.deactivate(id)
+
+        if(msg.split(" ")[0] == "User"){
+            flash.statusMsg = msg
+        }
+
+        redirect(uri: request.getHeader('referer'))
     }
 }

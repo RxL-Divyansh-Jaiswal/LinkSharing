@@ -58,9 +58,9 @@ class TopicController {
         List<TopicDetailDTO> topics = []
         detailedTopics.each {
           if(Subscription.findByTopicAndSubscriber(it,session.user) != null){
-                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: true)
+                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: true)
             }else{
-                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: false)
+                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id,creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: false)
             }
         }
 

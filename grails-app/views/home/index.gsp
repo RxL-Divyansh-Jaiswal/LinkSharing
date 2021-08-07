@@ -7,6 +7,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://kit.fontawesome.com/75cf4e84e0.js" crossorigin="anonymous"></script>
     <asset:stylesheet src="home/index.css"></asset:stylesheet>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <asset:javascript src="topPosts.js"></asset:javascript>
+    <asset:javascript src="recentPosts.js"></asset:javascript>
+    <script>
+        var topUrl = "${createLink(controller: 'resource', action: 'topPosts')}"
+        var recentUrl = "${createLink(controller: 'resource', action: 'recentShares')}"
+    </script>
     <title>Home Page</title>
 </head>
 
@@ -34,108 +41,22 @@
                 <h2 style="margin: 0 2%">Recent Shares</h2>
             </div>
 
-            <div class="card">
-                <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                     style="height: 6rem; width: 6rem;">
-
-                <div class="card_details">
-                    <div class="info">
-                        <p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday &nbsp; 5 min</p>
-
-                        <p style="float: right; margin: 0;"><a href="">Grails</a></p>
-                    </div>
-
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-
-                    <div class="card_navigator">
-                        <p style="float: left; margin: 0">
-                            <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i>
-                        </a>
-                        </p>
-
-                        <p style="float: right; margin: 0;"><a href="">View Post</a></p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="card">
-                <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                     style="height: 6rem; width: 6rem;">
-
-                <div class="card_details">
-                    <div class="info">
-                        <p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday &nbsp; 5 min</p>
-
-                        <p style="float: right; margin: 0;"><a href="">Grails</a></p>
-                    </div>
-
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-
-                    <div class="card_navigator">
-                        <p style="float: left; margin: 0">
-                            <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i>
-                        </a>
-                        </p>
-
-                        <p style="float: right; margin: 0;"><a href="">View Post</a></p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            <div id="recent_shares" style="min-height:10rem; max-height: 20rem;overflow-y: scroll;"></div>
         </div>
 
         <div class="tops">
             <div class="head_box">
                 <h2 style="margin: 0 2%; display: inline-block;">Top Posts</h2>
-                <select style="float: right; margin-right: 1%; margin-top: 1%;">
-                    <option>Day</option>
-                    <option>Week</option>
-                    <option>Month</option>
-                    <option>Year</option>
-                </select>
+                %{--<select style="float: right; margin-right: 1%; margin-top: 1%;">--}%
+                    %{--<option>Day</option>--}%
+                    %{--<option>Week</option>--}%
+                    %{--<option>Month</option>--}%
+                    %{--<option>Year</option>--}%
+                %{--</select>--}%
 
             </div>
 
-            <div style="overflow-y: scroll;">
-                <div class="card">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 6rem; width: 6rem;">
-
-                    <div class="card_details">
-                        <div class="info">
-                            <p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday &nbsp; 5 min</p>
-
-                            <p style="float: right; margin: 0;"><a href="">Grails</a></p>
-                        </div>
-
-                        <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-
-                        <div class="card_navigator">
-                            <p style="float: left; margin: 0">
-                                <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-twitter"></i></a> &nbsp; <a href=""><i
-                                    class="fab fa-google-plus-g"></i></a>
-                            </p>
-
-                            <p style="float: right; margin: 0;"><a href="">View Post</a></p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div id="top_posts" style="min-height:10rem; max-height: 20rem;overflow-y: scroll;"></div>
 
         </div>
 

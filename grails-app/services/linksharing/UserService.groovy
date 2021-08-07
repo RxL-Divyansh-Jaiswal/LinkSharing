@@ -49,13 +49,14 @@ class UserService {
         }else{
             if(params.password != user.password) {
 //            redirect back with an error msg
-                if(user.active == false){
-                    msg = "Please contact admin"
-                }
                 msg = "Invalid email/password"
             }else{
-                map.put('user',user)
-                msg = "Login Successfully"
+                if(user.active == false){
+                    msg = "Please contact admin"
+                }else{
+                    map.put('user',user)
+                    msg = "Login Successfully"
+                }
             }
         }
 
@@ -138,7 +139,7 @@ class UserService {
         }else{
             user.active = false
             user.save(flush: true)
-            return "User deactivated"
+            return "User Deactivated"
         }
     }
 }

@@ -40,10 +40,15 @@
                     <button class="settings_btn" style="font-size: 1.5rem;">${session.user.userName}</button>
 
                     <div class="settings_opt">
-                        <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
-                        <a href="">Topics</a>
-                        <a href="">Posts</a>
-                        <g:link controller="user" action="logout">Logout</g:link>
+                        <g:if test="${session.user.admin}">
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="allUsers">Users</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:if>
+                        <g:else>
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:else>
                     </div>
                 </div>
             </li>
@@ -104,7 +109,7 @@
 
                                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                     <div>
-                                        <p style="margin-bottom: 0;">@${i.topic.createdBy.userName}</p>
+                                        <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${i.topic.createdBy.id}" style="text-decoration: none; color: darkred;">@${i.topic.createdBy.userName}</g:link></p>
                                         <g:if test="${i.topic.createdBy.id != session.user.id}">
                                             <g:link controller="topic" action="unsubscribeTopic" id="${i.topic.id}">Unsubscribe</g:link>
                                         </g:if>
@@ -151,24 +156,21 @@
 
         <div class="trending_topics" style="height: auto;">
             <div class="head_box">
-                <h3 style="margin: 0 2%; display: inline-block;">Trendings Topics</h3>
+                <h3 style="margin: 0 2%; display: inline-block;">Trending Topics</h3>
             </div>
 
             <div style="min-height: 8rem; max-height: 14rem; overflow-y: scroll">
-                <g:each in="${treandingTopics}" var="i">
+                <g:each in="${trendingTopics}" var="i">
                     <g:if test="${i.isSubscribed}">
                         <div class="topic_details" style="margin-bottom: 8%;">
                             <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
-                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                                 %{--style="height: 5rem; width: 5rem;">--}%
-
                             <div class="topic_info">
                                 <input type="text" placeholder="${i.topicName}">
                                 <button>Save</button>
 
                                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                     <div>
-                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${i.creatorId}" style="text-decoration: none; color: darkred;">@${i.creatorUserName}</g:link></p>
                                         <g:link controller="topic" action="unsubscribeTopic" id="${i.topicId}">Unsubscribe</g:link>
                                     </div>
 
@@ -208,16 +210,13 @@
                     <g:else>
                         <div class="topic_details" style="margin-bottom: 8%;">
                             <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
-                            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                                 %{--style="height: 5rem; width: 5rem;">--}%
-
                             <div class="topic_info">
                                 <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
                                                               id="${i.topicId}">${i.topicName}</g:link></p>
 
                                 <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                     <div>
-                                        <p style="margin-bottom: 0;">@${i.creatorUserName}</p>
+                                        <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${i.creatorId}" style="text-decoration: none; color: darkred;">@${i.creatorUserName}</g:link></p>
                                         <g:link controller="topic" action="subscribeTopic" id="${i.topicId}">Subscribe</g:link>
                                     </div>
 
@@ -238,83 +237,6 @@
                     </g:else>
                 </g:each>
             </div>
-
-
-            %{--<div class="topic_details">--}%
-                %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                     %{--style="height: 5rem; width: 5rem;">--}%
-
-                %{--<div class="topic_info">--}%
-                    %{--<p style="margin: 0;"><a href="">Grails</a></p>--}%
-
-                    %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
-                        %{--<div>--}%
-                            %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
-                            %{--<a href="">Subscribe</a>--}%
-                        %{--</div>--}%
-
-                        %{--<div>--}%
-                            %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
-
-                            %{--<p>30</p>--}%
-                        %{--</div>--}%
-
-                        %{--<div>--}%
-                            %{--<p style="margin-bottom: 0;">Posts</p>--}%
-
-                            %{--<p>50</p>--}%
-                        %{--</div>--}%
-                    %{--</div>--}%
-                %{--</div>--}%
-            %{--</div>--}%
-
-                %{--<div class="topic_details">--}%
-                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                         %{--style="height: 5rem; width: 5rem;">--}%
-
-                    %{--<div class="topic_info">--}%
-                        %{--<input type="text" placeholder="Grails">--}%
-                        %{--<button>Save</button>--}%
-
-                        %{--<div style="display: flex; flex-direction: row; justify-content: space-between;">--}%
-                            %{--<div>--}%
-                                %{--<p style="margin-bottom: 0;">@rcthomas</p>--}%
-                                %{--<a href="">Subscribe</a>--}%
-                            %{--</div>--}%
-
-                            %{--<div>--}%
-                                %{--<p style="margin-bottom: 0;">Subscriptions</p>--}%
-
-                                %{--<p>30</p>--}%
-                            %{--</div>--}%
-
-                            %{--<div>--}%
-                                %{--<p style="margin-bottom: 0;">Posts</p>--}%
-
-                                %{--<p>50</p>--}%
-                            %{--</div>--}%
-                        %{--</div>--}%
-
-                        %{--<div style="float: right;">--}%
-                            %{--<select>--}%
-                                %{--<option>Serious</option>--}%
-                                %{--<option>Very Serious</option>--}%
-                                %{--<option>Casual</option>--}%
-                            %{--</select>--}%
-
-                            %{--<select>--}%
-                                %{--<option>Private</option>--}%
-                                %{--<option>Public</option>--}%
-                            %{--</select>--}%
-
-                            %{--<button style="background: transparent; border: none;"><i class="far fa-envelope"></i>--}%
-                            %{--</button>--}%
-                            %{--<button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>--}%
-                            %{--<button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>--}%
-                        %{--</div>--}%
-                    %{--</div>--}%
-                %{--</div>--}%
-
         </div>
     </div>
 
@@ -337,7 +259,7 @@
 
                             <div class="post_card_details">
                                 <div class="info">
-                                    <p style="float: left; margin: 0;">${i.createdBy.name} &nbsp; @${i.createdBy.userName}</p>
+                                    <p style="float: left; margin: 0;">${i.createdBy.name} &nbsp; <g:link controller="user" action="getProfile" id="${i.createdBy.id}" style="text-decoration: none; color: darkred;">@${i.createdBy.userName}</g:link></p>
 
                                     <p style="float: right; margin: 0;"><g:link controller="topic" action="viewTopic"
                                                                                 id="${i.topic.id}">${i.topic.name}</g:link></p>
@@ -347,10 +269,6 @@
                                 <p>${i.description.substring(0, 120)}...</p>
                             </g:if>
                             <g:else><p>${i.description}</p></g:else>
-
-                                %{--<p>--}%
-                                    %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-                                %{--</p>--}%
 
                                 <div class="post_card_navigator">
                                     <p style="float: left; margin: 0">
@@ -366,77 +284,19 @@
                                     </g:if>
                                     <g:else>
                                         <p style="float: right; margin: 0;"><a
-                                                href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
-                                                                                                                                                             action="viewResource"
-                                                                                                                                                             id="${i.id}">View Post</g:link></p>
+                                                href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
                                         </div>
                                     </g:else>
                             </div>
                         </div>
                     </g:if>
                 </g:each>
-                %{--<div class="post_card">--}%
-                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                         %{--style="height: 5rem; width: 5rem;">--}%
-
-                    %{--<div class="post_card_details">--}%
-                        %{--<div class="info">--}%
-                            %{--<p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>--}%
-
-                            %{--<p style="float: right; margin: 0;"><a href="">Grails</a></p>--}%
-                        %{--</div>--}%
-
-                        %{--<p>--}%
-                            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-                        %{--</p>--}%
-
-                        %{--<div class="post_card_navigator">--}%
-                            %{--<p style="float: left; margin: 0">--}%
-                                %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i--}%
-                                    %{--class="fab fa-twitter"></i></a> &nbsp; <a href=""><i--}%
-                                    %{--class="fab fa-google-plus-g"></i></a>--}%
-                            %{--</p>--}%
-
-                            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a--}%
-                                    %{--href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a--}%
-                                    %{--href="">View Post</a></p>--}%
-                        %{--</div>--}%
-                    %{--</div>--}%
-                %{--</div>--}%
-
-                %{--<div class="post_card">--}%
-                    %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"--}%
-                         %{--style="height: 5rem; width: 5rem;">--}%
-
-                    %{--<div class="post_card_details">--}%
-                        %{--<div class="info">--}%
-                            %{--<p style="float: left; margin: 0;">Uday Pratap Singh &nbsp; @uday</p>--}%
-
-                            %{--<p style="float: right; margin: 0;"><a href="">Grails</a></p>--}%
-                        %{--</div>--}%
-
-                        %{--<p>--}%
-                            %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-                        %{--</p>--}%
-
-                        %{--<div class="post_card_navigator">--}%
-                            %{--<p style="float: left; margin: 0">--}%
-                                %{--<a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i--}%
-                                    %{--class="fab fa-twitter"></i></a> &nbsp; <a href=""><i--}%
-                                    %{--class="fab fa-google-plus-g"></i></a>--}%
-                            %{--</p>--}%
-
-                            %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a--}%
-                                    %{--href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a--}%
-                                    %{--href="">View Post</a></p>--}%
-                        %{--</div>--}%
-                    %{--</div>--}%
-                %{--</div>--}%
             </div>
         </div>
     </div>
 
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"

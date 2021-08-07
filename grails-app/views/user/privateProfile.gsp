@@ -37,10 +37,15 @@
                     <button class="settings_btn" style="font-size: 1.5rem;">${session.user.userName}</button>
 
                     <div class="settings_opt">
-                        <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
-                        <a href="">Topics</a>
-                        <a href="">Posts</a>
-                        <g:link controller="user" action="logout">Logout</g:link>
+                        <g:if test="${session.user.admin}">
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="allUsers">Users</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:if>
+                        <g:else>
+                            <g:link controller="user" action="getProfile" id="${session.user.id}">Profile</g:link>
+                            <g:link controller="user" action="logout">Logout</g:link>
+                        </g:else>
                     </div>
                 </div>
             </li>

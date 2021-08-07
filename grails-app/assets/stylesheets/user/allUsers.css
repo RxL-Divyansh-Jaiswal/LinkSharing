@@ -90,40 +90,6 @@
 
 .settings:hover .settings_opt {display: block;}
 
-
-/* main area */
-#main_area{
-    display: flex;
-    /*border: 1px solid black;*/
-    margin: 2%;
-    height: auto;
-    width: auto;
-}
-
-.user_info{
-    height: 100%;
-    width: 45%;
-    /*background: red;*/
-}
-
-.user_card{
-    border: 1px solid black;
-    height: 8rem;
-    width: auto;
-    margin: 2%;
-    border-radius: 15px;
-    display: flex;
-    align-items: center;
-}
-
-.topics,.subscriptions{
-    border: 1px solid black;
-    border-radius: 15px 15px 0 0;
-    height: auto;
-    margin: 3% 2% 2% 2%;
-    width: auto;
-}
-
 .search_results{
     border: 1px solid black;
     border-radius: 15px 15px 0 0;
@@ -144,85 +110,16 @@
     vertical-align: text-top;
 }
 
-.head_box .topic_search_btn{
-    border: none;
-    background: white;
-    color: cornflowerblue;
-    border-radius: 5px;
+#table_id_wrapper{
+    margin-top: 5%;
 }
 
-.topics_list,.subscriptions_list{
-    min-height: 8rem;
-    max-height: 14rem;
-    overflow-y: scroll;
+.deactivate{
+    color: red;
 }
 
-.topic_card{
-    border-bottom: 1px solid black;
-    height: 6rem;
-    width: auto;
-    margin: 2%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.inner_info{
-    margin-right: 2%;
-    width: 12rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.posts{
-    /*background: blue; */
-    height: 100%;
-    width: 55%;
-}
-
-.post_search_btn{
-    border: none;
-    background: white;
-    color: cornflowerblue;
-    border-radius: 5px;
-}
-
-.post_list{
-    margin: 2%;
-    min-height: 15rem;
-    max-height: 32rem;
-    width: auto;
-    border: 1px solid black;
-    border-radius: 15px 15px 0 0;
-}
-
-.related_posts{
-    /*border: 1px solid black;*/
-    min-height: 8rem;
-    max-height: 26rem;
-    width: auto;
-    margin: 2%;
-    overflow-y: scroll;
-}
-
-.post_card{
-    border-bottom: 1px solid black;
-    margin-top: 1%;
-}
-
-.post_card_details{
-    /*border: 0.5px solid black;*/
-    height: 5rem;
-    width: 35rem;
-    /*margin-left: 2%;*/
-}
-
-.post_card_navigator{
-    margin-top: -3%;
-    height: 2rem;
-    width: 100%;
-    /*border: 0.5px solid black;*/
+.activate{
+    color: green;
 }
 
 /* Additional CSS */
@@ -243,12 +140,14 @@
 }
 
 .success{
+    margin-top: 2%;
     font-size: 1rem;
     text-align: center;
     color: green;
 }
 
 .error{
+    margin-top: 2%;
     font-size: 1rem;
     text-align: center;
     color: red;
