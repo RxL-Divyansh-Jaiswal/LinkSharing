@@ -21,16 +21,11 @@
 <!-- navbar -->
 <div id="navbar">
     <g:link controller="home" action="home">Link Sharing</g:link>
-
-    <div class="navigator">
-        <input type="text" name="search" placeholder="Search...">
-        <button>Search</button>
-
-    </div>
-
 </div>
 
 <h3 class="success">${flash.logSuccess}</h3>
+<h3 class="success">${flash.resetSucc}</h3>
+<h3 class="success" style="color: cornflowerblue">${flash.dummy}</h3>
 
 <!-- main area -->
 <div id="main_area">
@@ -47,19 +42,10 @@
         <div class="tops">
             <div class="head_box">
                 <h2 style="margin: 0 2%; display: inline-block;">Top Posts</h2>
-                %{--<select style="float: right; margin-right: 1%; margin-top: 1%;">--}%
-                    %{--<option>Day</option>--}%
-                    %{--<option>Week</option>--}%
-                    %{--<option>Month</option>--}%
-                    %{--<option>Year</option>--}%
-                %{--</select>--}%
-
             </div>
 
             <div id="top_posts" style="min-height:10rem; max-height: 20rem;overflow-y: scroll;"></div>
-
         </div>
-
     </div>
 
     <div class="forms">
@@ -76,8 +62,7 @@
                 <label>Password</label>
                 <input type="password" name="password" required>
                 <br>
-
-                <p class="forgetLink"><a href=""><i>Forget Password</i></a></p>
+                <p class="forgetLink"><g:link controller="user" action="forgetPassword" style="color:cornflowerblue;"><i>Forgot Password</i></g:link></p>
                 <input id="loginBtn" type="submit" value="Log In">
             </g:form>
 
@@ -108,6 +93,20 @@
                 <br>
                 <label style="margin-top: 10px;">Confirm Password</label>
                 <input type="password" name="cnf_password" placeholder="(5 - 15 characters)" required>
+                <br>
+                <label style="margin-top: 10px;">Security Question</label>
+                <select name="question" required>
+                    <option>What is your nickname ?</option>
+                    <option>What is your date of birth (dd/mm/yy) ?</option>
+                    <option>What was your school/college name ?</option>
+                    <option>What is your mother's name ?</option>
+                    <option>What is your mother's dob (dd/mm/yy) ?</option>
+                    <option>What is your father's name ?</option>
+                    <option>What is your father's dob (dd/mm/yy) ?</option>
+                </select>
+                <br>
+                <label style="margin-top: 10px;">Answer</label>
+                <input type="text" name="answer" style="width: 14rem;" placeholder="Remember and keep this confidential" required>
                 <br>
                 <label style="margin-top: 10px;">Photo</label>
                 <input type="file" name="image">

@@ -21,7 +21,7 @@
         <ul>
             <li>
                 <input type="text" id="search_text" name="search" placeholder="Search...">
-                <button id="search_btn">Search</button>
+                <button id="search_btn"><i class="fas fa-search"></i></button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
             </li>
@@ -73,7 +73,7 @@
     <div class="user_info">
         <div class="user_card">
             <asset:image src="${user.photo}" style="height: 6rem; width: 6rem;"></asset:image>
-            %{--<img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png" style="height: 6rem; width: 6rem;">--}%
+
             <div style="margin-left: 1%;">
                 <p style="margin: 0;">${user.name}</p>
                 <p style="margin: 0;">@${user.userName}</p>
@@ -91,8 +91,7 @@
                 <g:each in="${topics}" var="i">
                     <div class="topic_card">
                         <div>
-                            <p><g:link controller="topic" action="viewTopic"
-                                       id="${i.id}">${i.name}</g:link></p>
+                            <p><g:link controller="topic" action="viewTopic" id="${i.id}">${i.name}</g:link></p>
                             <p><g:link controller="topic" action="subscribeTopic" id="${i.id}">Subscribe</g:link></p>
                         </div>
 
@@ -120,8 +119,7 @@
                 <g:each in="${subscriptions}" var="i">
                     <div class="topic_card">
                         <div>
-                            <p><g:link controller="topic" action="viewTopic"
-                                       id="${i.topic.id}">${i.topic.name}</g:link></p>
+                            <p><g:link controller="topic" action="viewTopic" id="${i.topic.id}">${i.topic.name}</g:link></p>
                             <p><g:link controller="topic" action="subscribeTopic" id="${i.topic.id}">Subscribe</g:link></p>
                         </div>
 
@@ -145,48 +143,33 @@
         <div class="post_list">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Posts</h3>
-                <div style="float: right; margin-right: 1%; margin-top: 1%;">
-                    <input type="text" placeholder="Search Post...">
-                    <button class="post_search_btn"><i class="fas fa-search"></i></button>
-                </div>
             </div>
 
             <div class="related_posts">
                 <g:each in="${resources}" var="i">
                     <div class="post_card">
-                        <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
-                                                      id="${i.topic.id}">${i.topic.name}</g:link></p>
+                        <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${i.topic.id}">${i.topic.name}</g:link></p>
                         <div class="post_card_details">
                             <g:if test="${i.description.length() > 120}">
                                 <p>${i.description.substring(0, 120)}...</p>
                             </g:if>
                             <g:else><p>${i.description}</p></g:else>
-                            %{--<p>--}%
-                                %{--Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.--}%
-                            %{--</p>--}%
 
                             <div class="post_card_navigator">
                                 <p style="float: left; margin: 0">
                                     <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i></a>
                                 </p>
                             <g:if test="${i.class == linksharing.DocumentResource}">
-                                <p style="float: right; margin: 0;"><g:link controller="resource" action="download"
-                                                                            id="${i.id}">Download</g:link>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
-                                                                                                                                                                                                                action="viewResource"
-                                                                                                                                                                                                                id="${i.id}">View Post</g:link></p>
+                                <p style="float: right; margin: 0;"><g:link controller="resource" action="download" id="${i.id}">Download</g:link>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
                             </g:if>
                             <g:else>
                                 <p style="float: right; margin: 0;"><a
-                                        href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
-                                                                                                                                                                                                action="viewResource"
-                                                                                                                                                                                                id="${i.id}">View Post</g:link></p>
+                                        href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
                                 </div>
                             </g:else>
-                                %{--<p style="float: right; margin: 0;"><a href="">Download</a>&nbsp;&nbsp;<a href="">View Full Site</a>&nbsp;&nbsp;<a href="">Mark as Read</a>&nbsp;&nbsp;<a href="">View Post</a></p>--}%
                             </div>
                         </div>
                     </div>
-
                 </g:each>
             </div>
         </div>

@@ -1,3 +1,4 @@
+<%@ page import="linksharing.Subscription" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,9 +9,13 @@
     <asset:stylesheet src="topic/viewTopic.css"></asset:stylesheet>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <asset:javascript src="searchTopic.js"></asset:javascript>
+    <asset:javascript src="modifier.js"></asset:javascript>
     <script>
         var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
-    </script>
+        var visUrl = "${createLink(controller: 'topic', action: 'changeVisibility')}"
+        var serUrl = "${createLink(controller: 'topic', action: 'changeSeriousness')}"
+
+</script>
     <title>${topic.name}</title>
 </head>
 
@@ -23,7 +28,7 @@
         <ul>
             <li>
                 <input type="text" id="search_text" name="search" placeholder="Search...">
-                <button id="search_btn">Search</button>
+                <button id="search_btn"><i class="fas fa-search"></i></button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
             </li>
@@ -78,47 +83,87 @@
                 <h3 style="margin: 0 2%; display: inline-block;">Topic: "${topic.name}"</h3>
             </div>
 
-            <div class="topic_details">
-                <asset:image src="${topic.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
-                <div class="topic_info">
-                    <p style="margin: 0;"><g:link controller="topic" action="viewTopic"
-                                                  id="${topic.id}">${topic.name}</g:link>&nbsp;&nbsp;(${topic.visibility})</p>
+            <div id="topic_details">
+                <div class="topic_details">
+                    <asset:image src="${topic.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
+                    <div class="topic_info">
+                        <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${topic.id}">${topic.name}</g:link>&nbsp;&nbsp;(${topic.visibility})</p>
 
-                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                        <div>
-                            <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${topic.createdBy.id}" style="text-decoration: none; color: darkred;">@${topic.createdBy.userName}</g:link></p>
-                            <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user)}">
-                                <g:link controller="topic" action="unsubscribeTopic" id="${topic.id}">Unsubscribe</g:link>
-                            </g:if>
-                            <g:else>
-                                <g:link controller="topic" action="subscribeTopic" id="${topic.id}">Subscribe</g:link>
-                            </g:else>
+                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                            <div>
+                                <p style="margin-bottom: 0;"><g:link controller="user" action="getProfile" id="${topic.createdBy.id}" style="text-decoration: none; color: darkred;">@${topic.createdBy.userName}</g:link></p>
+                                <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user)}">
+                                    <g:link controller="topic" action="unsubscribeTopic" id="${topic.id}">Unsubscribe</g:link>
+                                </g:if>
+                                <g:else>
+                                    <g:link controller="topic" action="subscribeTopic" id="${topic.id}">Subscribe</g:link>
+                                </g:else>
 
-                        </div>
+                            </div>
 
-                        <div>
-                            <p style="margin-bottom: 0;">Subscriptions</p>
+                            <div>
+                                <p style="margin-bottom: 0;">Subscriptions</p>
 
-                            <p>${subscriptions.size()}</p>
-                        </div>
+                                <p>${subscriptions.size()}</p>
+                            </div>
 
-                        <div>
-                            <p style="margin-bottom: 0;">Posts</p>
+                            <div>
+                                <p style="margin-bottom: 0;">Posts</p>
 
-                            <p>${resources.size()}</p>
+                                <p>${resources.size()}</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div style="float: right;">
-                <select>
-                    <option>Serious</option>
-                    <option>Very Serious</option>
-                    <option>Casual</option>
-                </select>
+                <div style="float: right;">
+                    <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user)}">
+                        <select onchange="changeSeriousness(${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user).id},this.value)">
+                            <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user).seriousness == linksharing.enums.Seriousness.Very_Serious}">
+                                <option value="Very_Serious">Very Serious</option>
+                                <option value="Serious">Serious</option>
+                                <option value="Casual">Casual</option>
+                            </g:if>
+                            <g:elseif test="${linksharing.Subscription.findByTopicAndSubscriber(topic,session.user).seriousness == linksharing.enums.Seriousness.Serious}">
+                                <option value="Serious">Serious</option>
+                                <option value="Casual">Casual</option>
+                                <option value="Very_Serious">Very Serious</option>
+                            </g:elseif>
+                            <g:else>
+                                <option value="Casual">Casual</option>
+                                <option value="Very_Serious">Very Serious</option>
+                                <option value="Serious">Serious</option>
+                            </g:else>
+                        </select>
+                    </g:if>
+                    <g:else>
+                        <select>
+                            <option>Casual</option>
+                            <option>Serious</option>
+                            <option>Very Serious</option>
+                        </select>
+                    </g:else>
 
-                <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+
+                    <g:if test="${topic.createdBy.id == session.user.id}">
+                        <select onchange="changeVisibility(${topic.id},this.value)">
+                            <g:if test="${topic.visibility == linksharing.enums.Visibility.Private}">
+                                <option>Private</option>
+                                <option>Public</option>
+                            </g:if>
+                            <g:else>
+                                <option>Public</option>
+                                <option>Private</option>
+                            </g:else>
+                        </select>
+
+                        <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+                        <button style="background: transparent; border: none;"><g:link controller="topic" action="deleteTopic" id="${topic.id}" style="color: black;"><i class="fas fa-trash"></i></g:link></button>
+                    </g:if>
+                    <g:else>
+                        <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+                    </g:else>
+                </div>
             </div>
         </div>
 
@@ -151,11 +196,6 @@
         <div class="post_list">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Posts: "${topic.name}"</h3>
-
-                <div style="float: right; margin-right: 1%; margin-top: 1%;">
-                    <input type="text" placeholder="Search Post...">
-                    <button class="post_search_btn"><i class="fas fa-search"></i></button>
-                </div>
             </div>
 
             <div class="related_posts">
@@ -170,24 +210,15 @@
 
                             <div class="post_card_navigator">
                                 <p style="float: left; margin: 0">
-                                    <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i
-                                        class="fab fa-twitter"></i></a> &nbsp; <a href=""><i
-                                        class="fab fa-google-plus-g"></i></a>
+                                    <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i></a>
                                 </p>
                                 <g:if test="${i.class == linksharing.DocumentResource}">
-                                    <p style="float: right; margin: 0;"><g:link controller="resource" action="download"
-                                                                                id="${i.id}">Download</g:link>&nbsp;&nbsp;<a
-                                            href="">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
-                                                                                        action="viewResource"
-                                                                                        id="${i.id}">View Post</g:link>
+                                    <p style="float: right; margin: 0;"><g:link controller="resource" action="download" id="${i.id}">Download</g:link>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link>
                                     </p>
                                 </g:if>
                                 <g:else>
                                     <p style="float: right; margin: 0;"><a
-                                            href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a
-                                            href="">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource"
-                                                                                        action="viewResource"
-                                                                                        id="${i.id}">View Post</g:link>
+                                            href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link>
                                     </p>
                                 </g:else>
 

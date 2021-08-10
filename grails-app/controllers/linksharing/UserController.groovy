@@ -1,5 +1,8 @@
 package linksharing
 
+import dto.UserDetailsDTO
+import grails.converters.JSON
+
 class UserController {
 
     def userService
@@ -15,7 +18,8 @@ class UserController {
     }
 
     def privateProfile(){
-        render(view: 'privateProfile')
+        List<Topic> topics = Topic.findAllByCreatedBy(session.user)
+        render(view: 'privateProfile', model: [topics:topics])
     }
 
     def publicProfile(){
@@ -113,5 +117,32 @@ class UserController {
         }
 
         redirect(uri: request.getHeader('referer'))
+    }
+
+    def forgetPassword(){}
+
+    def checkUser(){
+        User u = User.findByEmail(params.email)
+        String msg = u != null ? "Found the user" : "No account with this email"
+
+        List list = []
+        list << msg
+        if(msg.split(" ")[0] == "Found"){
+            list << new UserDetailsDTO(email: u.email, ques: u.question)
+        }
+
+        render(list as JSON)
+    }
+
+    def resetPassword(){
+        String msg = userService.reset(params)
+
+        if(msg.split(" ")[0] == "Password"){
+            flash.resetSucc = msg
+            redirect url: "/"
+        }else{
+            flash.msg = msg
+            redirect(uri: request.getHeader('referer'))
+        }
     }
 }

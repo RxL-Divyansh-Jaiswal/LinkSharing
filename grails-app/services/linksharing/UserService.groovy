@@ -142,4 +142,19 @@ class UserService {
             return "User Deactivated"
         }
     }
+
+    def reset(Map params){
+        User u = User.findByEmail(params.email)
+
+        if(u.answer != params.answer){
+            return "Answer don't match, try again..."
+        }else{
+            if(params.new_password != params.cnf_password){
+                return "Passwords don't match, Please try again..."
+            }else{
+                User.executeUpdate('update User set password=:password where id=:id',['password':params.new_password,'id':u.id])
+                return "Password Reset Successful..."
+            }
+        }
+    }
 }

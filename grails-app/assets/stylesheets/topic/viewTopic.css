@@ -49,11 +49,12 @@
 }
 
 .navigator #search_btn{
-    font-size: 1.25rem;
+    font-size: 1rem;
+    padding: 3px;
     border-radius: 10px;
     border: none;
-    background: white;
-    color: blue;
+    background: transparent;
+    color: white;
     cursor: pointer;
 }
 

@@ -9,6 +9,8 @@ class User {
     String photo
     boolean admin
     boolean active
+    String question
+    String answer
     Date dateCreated
     Date lastUpdated
 

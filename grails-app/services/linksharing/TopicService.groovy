@@ -3,6 +3,7 @@ package linksharing
 import dto.TopicDetailDTO
 import grails.gorm.transactions.Transactional
 import linksharing.enums.Seriousness
+import linksharing.enums.Visibility
 
 @Transactional
 class TopicService {
@@ -140,12 +141,12 @@ class TopicService {
     }
 
     def trending(User user){
-        List<Topic> topics = Topic.all
+        List<Topic> topics = Topic.findAllByVisibility("Public")
         List<TopicDetailDTO> list = []
 
         topics.each{
             if(Subscription.findByTopicAndSubscriber(it,user)){
-                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: true)
+                list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: true, subsId: Subscription.findByTopicAndSubscriber(it,user).id, seriousness: Subscription.findByTopicAndSubscriber(it,user).seriousness,visibility: Visibility.Public)
             }else{
                 list << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id,creatorPhoto: it.createdBy.photo, creatorName: it.createdBy.name, creatorUserName: it.createdBy.userName, isSubscribed: false)
             }
@@ -159,13 +160,11 @@ class TopicService {
         Topic topic = Topic.findById(id)
 
         try {
-            if(topic.createdBy == user || user.admin){
-                List<Subscription> subscriptions = topic.subscriptions
-                List<Resource> resources = topic.resources
-                Subscription.deleteAll(subscriptions)
-                Resource.deleteAll(resources)
-                topic.delete()
-            }
+            List<Subscription> subscriptions = Subscription.findAllByTopic(topic)
+            List<Resource> resources = Resource.findAllByTopic(topic)
+            Subscription.deleteAll(subscriptions)
+            Resource.deleteAll(resources)
+            topic.delete(flush: true,failOnError: true)
             return "Topic along with associated subscriptions and resources deleted successfully"
         } catch (Exception e) {
             return "Error in deleting topic"

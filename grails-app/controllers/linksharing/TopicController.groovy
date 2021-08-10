@@ -2,6 +2,7 @@ package linksharing
 
 import dto.TopicDetailDTO
 import grails.converters.JSON
+import linksharing.enums.Seriousness
 import linksharing.enums.Visibility
 
 class TopicController {
@@ -80,9 +81,33 @@ class TopicController {
         redirect(uri: request.getHeader('referer'))
     }
 
+    def changeVisibility(){
+        println params
+        Topic t = Topic.findById(params.int("topic_id"))
+        t.visibility = Visibility.valueOf(params.new_visibility)
+        t.save(flush: true)
+
+        List list = []
+        list << "Visibility Changed"
+        render(list as JSON)
+    }
+
+    def changeSeriousness(){
+        println params
+        Subscription s = Subscription.findById(params.int("subs_id"))
+        s.seriousness = Seriousness.valueOf(params.new_seriousness)
+        s.save(flush:true)
+
+        List list = []
+        list << "Seriousness Changed"
+        render(list as JSON)
+    }
+
     def deleteTopic(int id){
         String msg = topicService.delete(session.user,id)
 
-        render msg
+        flash.topicDelSuccess = msg
+
+        redirect(controller: "user", action: "dashboard")
     }
 }

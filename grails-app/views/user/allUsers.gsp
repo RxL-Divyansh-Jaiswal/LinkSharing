@@ -34,7 +34,7 @@
         <ul>
             <li>
                 <input type="text" id="search_text" name="search" placeholder="Search...">
-                <button id="search_btn">Search</button>
+                <button id="search_btn"><i class="fas fa-search"></i></button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
             </li>

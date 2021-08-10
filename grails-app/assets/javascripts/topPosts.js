@@ -15,7 +15,7 @@ $(document).ready(function () {
                                '                        <div class="info">\n' +
                                '                            <p style="float: left; margin: 0;">'+ response[i].creatorName +' &nbsp; @'+response[i].creatorUserName+' &nbsp; less than a min</p>\n' +
                                '\n' +
-                               '                            <p style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</p>\n' +
+                               '                            <a href="/home/dummy" style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</a>\n' +
                                '                        </div>\n' +
                                '\n' +
                                '                        <p>\n' +
@@ -38,7 +38,7 @@ $(document).ready(function () {
                                '                        <div class="info">\n' +
                                '                            <p style="float: left; margin: 0;">'+ response[i].creatorName +' &nbsp; @'+response[i].creatorUserName+' &nbsp; less than a min</p>\n' +
                                '\n' +
-                               '                            <p style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</p>\n' +
+                               '                            <a href="/home/dummy" style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</a>\n' +
                                '                        </div>\n' +
                                '\n' +
                                '                        <p>\n' +
@@ -63,7 +63,7 @@ $(document).ready(function () {
                                '                        <div class="info">\n' +
                                '                            <p style="float: left; margin: 0;">'+ response[i].creatorName +' &nbsp; @'+response[i].creatorUserName+' &nbsp; '+response[i].minsPassed+' min</p>\n' +
                                '\n' +
-                               '                            <p style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</p>\n' +
+                               '                            <a href="/home/dummy" style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</a>\n' +
                                '                        </div>\n' +
                                '\n' +
                                '                        <p>\n' +
@@ -86,7 +86,7 @@ $(document).ready(function () {
                                '                        <div class="info">\n' +
                                '                            <p style="float: left; margin: 0;">'+ response[i].creatorName +' &nbsp; @'+response[i].creatorUserName+' &nbsp; '+response[i].minsPassed+' min</p>\n' +
                                '\n' +
-                               '                            <p style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</p>\n' +
+                               '                            <a href="/home/dummy" style="float: right; margin: 0; color: cornflowerblue">'+ response[i].topicName +'</a>\n' +
                                '                        </div>\n' +
                                '\n' +
                                '                        <p>\n' +
@@ -106,5 +106,5 @@ $(document).ready(function () {
                $("#top_posts").html(html);
            }
        });
-   },10000);
+   },5000);
 });

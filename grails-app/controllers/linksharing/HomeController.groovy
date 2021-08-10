@@ -13,4 +13,10 @@ class HomeController {
             redirect url: "/"
         }
     }
+
+    def dummy(){
+        flash.dummy = "Please login or register to continue..."
+
+        redirect url: "/"
+    }
 }

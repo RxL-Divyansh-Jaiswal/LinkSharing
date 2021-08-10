@@ -8,8 +8,11 @@
     <asset:stylesheet src="user/privateProfile.css"></asset:stylesheet>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <asset:javascript src="searchTopic.js"></asset:javascript>
+    <asset:javascript src="modifier.js"></asset:javascript>
     <script>
         var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
+        var visUrl = "${createLink(controller: 'topic', action: 'changeVisibility')}"
+        var serUrl = "${createLink(controller: 'topic', action: 'changeSeriousness')}"
     </script>
     <title>PRIVATE PROFILE PAGE</title>
 </head>
@@ -23,7 +26,7 @@
         <ul>
             <li>
                 <input type="text" id="search_text" name="search" placeholder="Search...">
-                <button id="search_btn">Search</button>
+                <button id="search_btn"><i class="fas fa-search"></i></button>
             </li>
             <li><button data-bs-toggle="modal" data-bs-target="#topicModal"><i class="fas fa-comment"></i></button>
             </li>
@@ -89,59 +92,71 @@
         <div class="topics">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Topics</h3>
-
-                <div style="float: right; margin-right: 1%; margin-top: 1%;">
-                    <input type="text" placeholder="Search Post...">
-                    <button class="topic_search_btn"><i class="fas fa-search"></i></button>
-                </div>
             </div>
 
-            <div>
-                <div class="topic_details">
-                    <img src="https://www.kindpng.com/picc/m/78-785827_user-profile-avatar-login-account-male-user-icon.png"
-                         style="height: 5rem; width: 5rem;">
+            <div id="topic_list" style="min-height: 10rem; max-height: 20rem; overflow-y: scroll">
+                <g:each in="${topics}" var="i">
+                    <div class="topic_details">
+                        <asset:image src="${i.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
 
-                    <div class="topic_info">
-                        <input type="text" placeholder="Grails">
-                        <button>Save</button>
+                        <div class="topic_info">
+                            <input type="text" placeholder="${i.name}">
+                            <button>Save</button>
 
-                        <div style="display: flex; flex-direction: row; justify-content: space-between;">
-                            <div>
-                                <p style="margin-bottom: 0;">@rcthomas</p>
+                            <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                                <div>
+                                    <p style="margin-bottom: 0;">@${i.createdBy.userName}</p>
+                                </div>
+
+                                <div>
+                                    <p style="margin-bottom: 0;">Subscriptions</p>
+
+                                    <p>${i.subscriptions.size()}</p>
+                                </div>
+
+                                <div>
+                                    <p style="margin-bottom: 0;">Posts</p>
+
+                                    <p>${i.resources.size()}</p>
+                                </div>
                             </div>
 
-                            <div>
-                                <p style="margin-bottom: 0;">Subscriptions</p>
+                            <div style="float: right;">
+                                <select onchange="changeSeriousness(${linksharing.Subscription.findByTopicAndSubscriber(i,session.user).id},this.value)">
+                                    <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(i,session.user).seriousness == linksharing.enums.Seriousness.Very_Serious}">
+                                        <option value="Very_Serious">Very Serious</option>
+                                        <option value="Serious">Serious</option>
+                                        <option value="Casual">Casual</option>
+                                    </g:if>
+                                    <g:elseif test="${linksharing.Subscription.findByTopicAndSubscriber(i,session.user).seriousness == linksharing.enums.Seriousness.Serious}">
+                                        <option value="Serious">Serious</option>
+                                        <option value="Casual">Casual</option>
+                                        <option value="Very_Serious">Very Serious</option>
+                                    </g:elseif>
+                                    <g:else>
+                                        <option value="Casual">Casual</option>
+                                        <option value="Very_Serious">Very Serious</option>
+                                        <option value="Serious">Serious</option>
+                                    </g:else>
+                                </select>
 
-                                <p>30</p>
+                                <select onchange="changeVisibility(${i.id},this.value)">
+                                    <g:if test="${i.visibility == linksharing.enums.Visibility.Private}">
+                                        <option>Private</option>
+                                        <option>Public</option>
+                                    </g:if>
+                                    <g:else>
+                                        <option>Public</option>
+                                        <option>Private</option>
+                                    </g:else>
+                                </select>
+
+                                <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+                                <button style="background: transparent; border: none;"><g:link controller="topic" action="deleteTopic" id="${i.id}" style="color: black;"><i class="fas fa-trash"></i></g:link></button>
                             </div>
-
-                            <div>
-                                <p style="margin-bottom: 0;">Posts</p>
-
-                                <p>50</p>
-                            </div>
-                        </div>
-
-                        <div style="float: right;">
-                            <select>
-                                <option>Serious</option>
-                                <option>Very Serious</option>
-                                <option>Casual</option>
-                            </select>
-
-                            <select>
-                                <option>Private</option>
-                                <option>Public</option>
-                            </select>
-
-                            <button style="background: transparent; border: none;"><i class="far fa-envelope"></i>
-                            </button>
-                            <button style="background: transparent; border: none;"><i class="fas fa-edit"></i></button>
-                            <button style="background: transparent; border: none;"><i class="fas fa-trash"></i></button>
                         </div>
                     </div>
-                </div>
+                </g:each>
             </div>
 
         </div>
@@ -155,8 +170,7 @@
 
             <h3 class="success">${flash.profileSucc}</h3>
 
-            <g:form controller="user" action="updateProfile" method="post" enctype="multipart/form-data"
-                    style="margin: 2%;">
+            <g:form controller="user" action="updateProfile" method="post" enctype="multipart/form-data" style="margin: 2%;">
                 <label>Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <input type="text" name="email" value="${session.user.email}" style="margin-top: 10px;">
                 <br>
