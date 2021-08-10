@@ -104,19 +104,19 @@
             </div>
 
             <div class="modal-body">
-                <form>
+                <g:form controller="topic" action="sendInvite" method="post">
                     <label>Email&nbsp;&nbsp;&nbsp;</label>
-                    <input type="email">
+                    <input type="email" name="email">
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;</label>
-                    <select style="margin-top: 1%;">
+                    <select name="topic" style="margin-top: 1%;">
                         <g:each in="${linksharing.Topic.list()}" var="i">
                             <option value="${i.name}">${i.name}</option>
                         </g:each>
                     </select>
                     <br>
                     <input class="form_btn" type="submit" value="Invite">
-                </form>
+                </g:form>
             </div>
         </div>
     </div>

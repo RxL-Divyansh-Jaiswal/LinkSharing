@@ -12,30 +12,36 @@ class TopicService {
 
     }
 
+//  create service
     def create(User user, Map params) {
         User creator = User.findById(user.id)
-        Topic newTopic = new Topic(params)
-        newTopic.createdBy = creator
-
-        try {
-            newTopic.save(flush: true, failOnError: true)
-            Subscription newSubscription = new Subscription(subscriber: creator, topic: newTopic, seriousness: Seriousness.Very_Serious)
+        if(Topic.findByNameAndCreatedBy(params.name,user)){
+            return "You cannot create two topics with same name, Try again with other name"
+        }else{
+            Topic newTopic = new Topic(params)
+            newTopic.createdBy = creator
 
             try {
-                newSubscription.save(flush: true, failOnError: true)
-                creator.subscriptions.add(newSubscription)
-                creator.save(flush: true, failOnError: true)
-            } catch (Exception e) {
-                return "Topic created, but error in creating subscription"
-            }
+                newTopic.save(flush: true, failOnError: true)
+                Subscription newSubscription = new Subscription(subscriber: creator, topic: newTopic, seriousness: Seriousness.Very_Serious)
 
-            return "Topic Created and Subscribed Successfully"
-        } catch (Exception e) {
-            println e
-            return "Error in creating topic"
+                try {
+                    newSubscription.save(flush: true, failOnError: true)
+                    creator.subscriptions.add(newSubscription)
+                    creator.save(flush: true, failOnError: true)
+                } catch (Exception e) {
+                    return "Topic created, but error in creating subscription"
+                }
+
+                return "Topic Created and Subscribed Successfully"
+            } catch (Exception e) {
+                println e
+                return "Error in creating topic"
+            }
         }
     }
 
+//  link resource service
     def linkResource(User user, Map params){
         User creator = User.findById(user.id)
         Topic relTopic = Topic.findByName(params.topic)
@@ -60,7 +66,6 @@ class TopicService {
                     }
                 }
             }
-
             return "Link Resource created and added to list successfully"
         }catch(Exception e){
             println e
@@ -68,6 +73,7 @@ class TopicService {
         }
     }
 
+//  doc resource service
     def docResource(User user, Map params, def request){
         User creator = User.findById(user.id)
         Topic relTopic = Topic.findByName(params.topic)
@@ -110,11 +116,13 @@ class TopicService {
         }
     }
 
+//  search service
     def search(String text){
         List<Topic> topics = Topic.findAllByNameLikeAndVisibility(text,"Public")
         return topics
     }
 
+//  subscribe service
     def subscribe(User user,int id){
         Topic topic = Topic.findById(id)
         Subscription subscription = new Subscription(subscriber: user,topic: topic, seriousness: Seriousness.Very_Serious)
@@ -128,6 +136,7 @@ class TopicService {
         }
     }
 
+//  unsubscribe service
     def unsubscribe(User user, int id){
         Topic topic = Topic.findById(id)
 
@@ -140,6 +149,7 @@ class TopicService {
         }
     }
 
+//  trending topics service
     def trending(User user){
         List<Topic> topics = Topic.findAllByVisibility("Public")
         List<TopicDetailDTO> list = []
@@ -152,10 +162,47 @@ class TopicService {
             }
 
         }
-
         return list.sort({ a, b -> a.postCount == b.postCount ? 0 : a.postCount < b.postCount ? 1 : -1 })
     }
 
+//  visibility service
+    def visibility(int id, String visibility){
+        Topic topic = Topic.findById(id)
+        topic.visibility = Visibility.valueOf(visibility)
+        topic.save(flush: true)
+        return "Visibility Changed"
+    }
+
+//  seriousness service
+    def seriousness(int id, String seriousness){
+        Subscription subscription = Subscription.findById(id)
+        subscription.seriousness = Seriousness.valueOf(seriousness)
+        subscription.save(flush:true)
+        return "Seriousness Changed"
+    }
+
+//  invite service
+    def invite(String email, String topicName){
+        User user = User.findByEmail(email)
+
+        if(user == null){
+            return "Cannot find any user with this email"
+        }else{
+            Topic relTopic = Topic.findByName(topicName)
+            Subscription newSubscription = new Subscription(subscriber: user,topic: relTopic, seriousness: Seriousness.Serious)
+
+            try{
+                newSubscription.save(flush:true,failOnError:true)
+                relTopic.subscriptions.add(newSubscription)
+                user.subscriptions.add(newSubscription)
+                return "Invited Successfully"
+            }catch(Exception e){
+                return "Error in inviting"
+            }
+        }
+    }
+
+//  delete service
     def delete(User user, int id) {
         Topic topic = Topic.findById(id)
 

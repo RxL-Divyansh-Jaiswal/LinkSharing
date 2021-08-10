@@ -60,11 +60,15 @@
 
 <h3 class="success">${flash.docResSuccess}</h3>
 
+<h3 class="success">${flash.inviteSuccess}</h3>
+
 <h3 class="error">${flash.topicError}</h3>
 
 <h3 class="error">${flash.linkResError}</h3>
 
 <h3 class="error">${flash.docResError}</h3>
+
+<h3 class="error">${flash.inviteError}</h3>
 
 <div class="search_results"></div>
 
@@ -92,7 +96,13 @@
                     <div class="topic_card">
                         <div>
                             <p><g:link controller="topic" action="viewTopic" id="${i.id}">${i.name}</g:link></p>
-                            <p><g:link controller="topic" action="subscribeTopic" id="${i.id}">Subscribe</g:link></p>
+                            <g:if test="${!linksharing.Subscription.findByTopicAndSubscriber(i,session.user)}">
+                                <p><g:link controller="topic" action="subscribeTopic" id="${i.id}">Subscribe</g:link></p>
+                            </g:if>
+                            <g:else>
+                                <p><g:link controller="topic" action="unsubscribeTopic" id="${i.id}">Unsubscribe</g:link></p>
+                            </g:else>
+
                         </div>
 
                         <div class="inner_info">
@@ -117,23 +127,30 @@
 
             <div class="subscriptions_list">
                 <g:each in="${subscriptions}" var="i">
-                    <div class="topic_card">
-                        <div>
-                            <p><g:link controller="topic" action="viewTopic" id="${i.topic.id}">${i.topic.name}</g:link></p>
-                            <p><g:link controller="topic" action="subscribeTopic" id="${i.topic.id}">Subscribe</g:link></p>
-                        </div>
+                    <g:if test="${linksharing.Subscription.findByIdAndSubscriber(i.id,user)}">
+                        <div class="topic_card">
+                            <div>
+                                <p><g:link controller="topic" action="viewTopic" id="${i.topic.id}">${i.topic.name}</g:link></p>
+                                <g:if test="${linksharing.Subscription.findByTopicAndSubscriber(i.topic,session.user)}">
+                                    <p><g:link controller="topic" action="unsubscribeTopic" id="${i.topic.id}">Unsubscribe</g:link></p>
+                                </g:if>
+                                <g:else>
+                                    <p><g:link controller="topic" action="subscribeTopic" id="${i.topic.id}">Subscribe</g:link></p>
+                                </g:else>
+                            </div>
 
-                        <div class="inner_info">
-                            <div>
-                                <p>Subscriptions</p>
-                                <p>${i.topic.subscriptions.size()}</p>
-                            </div>
-                            <div>
-                                <p>Posts</p>
-                                <p>${i.topic.resources.size()}</p>
+                            <div class="inner_info">
+                                <div>
+                                    <p>Subscriptions</p>
+                                    <p>${i.topic.subscriptions.size()}</p>
+                                </div>
+                                <div>
+                                    <p>Posts</p>
+                                    <p>${i.topic.resources.size()}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </g:if>
                 </g:each>
             </div>
         </div>
@@ -167,7 +184,6 @@
                                         href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
                                 </div>
                             </g:else>
-                            </div>
                         </div>
                     </div>
                 </g:each>

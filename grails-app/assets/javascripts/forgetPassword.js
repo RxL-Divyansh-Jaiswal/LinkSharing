@@ -8,7 +8,7 @@ $(document).ready(function () {
             },
             success: function (response) {
                 console.log(response);
-                $("#email").val(response[1].email);
+                $("#email").val(response[0].email);
                 $("#email").prop('disabled', true);
                 $("#check_btn").prop('disabled', true);
                 $("#check_btn").css({
@@ -16,8 +16,8 @@ $(document).ready(function () {
                     "cursor": "not-allowed"
                 });
 
-                $("#userEmail").prop('value', response[1].email);
-                $("#ques").text(response[1].ques);
+                $("#userEmail").prop('value', response[0].email);
+                $("#ques").text(response[0].ques);
                 $(".checker").show();
             }
         });

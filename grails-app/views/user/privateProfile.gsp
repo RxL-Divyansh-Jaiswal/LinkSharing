@@ -65,11 +65,15 @@
 
 <h3 class="success">${flash.docResSuccess}</h3>
 
+<h3 class="success">${flash.inviteSuccess}</h3>
+
 <h3 class="error">${flash.topicError}</h3>
 
 <h3 class="error">${flash.linkResError}</h3>
 
 <h3 class="error">${flash.docResError}</h3>
+
+<h3 class="error">${flash.inviteError}</h3>
 
 <div class="search_results"></div>
 
@@ -100,8 +104,7 @@
                         <asset:image src="${i.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
 
                         <div class="topic_info">
-                            <input type="text" placeholder="${i.name}">
-                            <button>Save</button>
+                        <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${i.id}">${i.name}</g:link></p>
 
                             <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                 <div>
@@ -151,7 +154,7 @@
                                     </g:else>
                                 </select>
 
-                                <button style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
+                                <button data-bs-toggle="modal" data-bs-target="#inviteModal" style="background: transparent; border: none;"><i class="far fa-envelope"></i></button>
                                 <button style="background: transparent; border: none;"><g:link controller="topic" action="deleteTopic" id="${i.id}" style="color: black;"><i class="fas fa-trash"></i></g:link></button>
                             </div>
                         </div>
@@ -169,6 +172,8 @@
             </div>
 
             <h3 class="success">${flash.profileSucc}</h3>
+
+            <h3 class="error">${flash.profileErr}</h3>
 
             <g:form controller="user" action="updateProfile" method="post" enctype="multipart/form-data" style="margin: 2%;">
                 <label>Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>

@@ -75,11 +75,15 @@
 
 <h3 class="success">${flash.docResSuccess}</h3>
 
+<h3 class="success">${flash.inviteSuccess}</h3>
+
 <h3 class="error">${flash.topicError}</h3>
 
 <h3 class="error">${flash.linkResError}</h3>
 
 <h3 class="error">${flash.docResError}</h3>
+
+<h3 class="error">${flash.inviteError}</h3>
 
 <h3 class="success">${flash.statusMsg}</h3>
 

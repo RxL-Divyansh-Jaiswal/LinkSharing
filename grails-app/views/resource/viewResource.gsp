@@ -68,11 +68,15 @@
 
 <h3 class="success">${flash.docResSuccess}</h3>
 
+<h3 class="success">${flash.inviteSuccess}</h3>
+
 <h3 class="error">${flash.topicError}</h3>
 
 <h3 class="error">${flash.linkResError}</h3>
 
 <h3 class="error">${flash.docResError}</h3>
+
+<h3 class="error">${flash.inviteError}</h3>
 
 <div class="search_results"></div>
 
@@ -108,12 +112,23 @@
                 <p style="float: left; margin: 0">
                     <a href=""><i class="fab fa-facebook-f"></i></a> &nbsp; <a href=""><i class="fab fa-twitter"></i></a> &nbsp; <a href=""><i class="fab fa-google-plus-g"></i></a>
                 </p>
-                <g:if test="${resource.class == linksharing.DocumentResource}">
-                    <p style="float: right; margin: 0;"><g:link controller="resource" action="download" id="${resource.id}">Download</g:link></p>
+                <g:if test="${resource.createdBy.id == session.user.id || session.user.admin}">
+                    <g:if test="${resource.class == linksharing.DocumentResource}">
+                        <p style="float: right; margin: 0;"><g:link controller="resource" action="deleteResource" id="${resource.id}">Delete</g:link>&nbsp;&nbsp;<g:link controller="resource" action="download" id="${resource.id}">Download</g:link></p>
+                    </g:if>
+                    <g:else>
+                        <p style="float: right; margin: 0;"><g:link controller="resource" action="deleteResource" id="${resource.id}">Delete</g:link>&nbsp;&nbsp;<a href="${resource.url}" target="_blank">View Full Site</a></p>
+                    </g:else>
                 </g:if>
                 <g:else>
-                    <p style="float: right; margin: 0;"><a href="${resource.url}" target="_blank">View Full Site</a></p>
+                    <g:if test="${resource.class == linksharing.DocumentResource}">
+                        <p style="float: right; margin: 0;"><g:link controller="resource" action="download" id="${resource.id}">Download</g:link></p>
+                    </g:if>
+                    <g:else>
+                        <p style="float: right; margin: 0;"><a href="${resource.url}" target="_blank">View Full Site</a></p>
+                    </g:else>
                 </g:else>
+
             </div>
         </div>
 
@@ -211,6 +226,22 @@
                                         <p>${i.postCount}</p>
                                     </div>
                                 </div>
+
+                                <g:if test="${session.user.admin}">
+                                    <p style="float: right; margin: -4% 0 0 0;">
+                                        <select onchange="changeVisibility(${i.topicId},this.value)">
+                                            <g:if test="${i.visibility == linksharing.enums.Visibility.Private}">
+                                                <option>Private</option>
+                                                <option>Public</option>
+                                            </g:if>
+                                            <g:else>
+                                                <option>Public</option>
+                                                <option>Private</option>
+                                            </g:else>
+                                        </select>
+                                        &nbsp;&nbsp;<g:link controller="topic" action="deleteTopic" id="${i.topicId}">Delete</g:link>
+                                    </p>
+                                </g:if>
                             </div>
                         </div>
                     </g:else>
