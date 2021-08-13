@@ -99,6 +99,23 @@
     height: auto;
 }
 
+.topic_details{
+    /*border: 0.5px solid black;*/
+    height: 6rem;
+    width: auto;
+    margin: 2%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.topic_info{
+    /*border: 0.5px solid black;*/
+    height: 5rem;
+    width: 22rem;
+}
+
 .head_box{
     height: 3rem;
     width: 100%;

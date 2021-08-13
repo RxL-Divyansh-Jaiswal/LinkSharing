@@ -8,17 +8,21 @@ $(document).ready(function () {
             },
             success: function (response) {
                 console.log(response);
-                $("#email").val(response[0].email);
-                $("#email").prop('disabled', true);
-                $("#check_btn").prop('disabled', true);
-                $("#check_btn").css({
-                    "background": "lightblue",
-                    "cursor": "not-allowed"
-                });
+                if(response.length === 0){
+                    $("#errMsg").text("No account with this email exists, Try again...");
+                }else{
+                    $("#email").val(response[0].email);
+                    $("#email").prop('disabled', true);
+                    $("#check_btn").prop('disabled', true);
+                    $("#check_btn").css({
+                        "background": "lightblue",
+                        "cursor": "not-allowed"
+                    });
 
-                $("#userEmail").prop('value', response[0].email);
-                $("#ques").text(response[0].ques);
-                $(".checker").show();
+                    $("#userEmail").prop('value', response[0].email);
+                    $("#ques").text(response[0].ques);
+                    $(".checker").show();
+                }
             }
         });
     });

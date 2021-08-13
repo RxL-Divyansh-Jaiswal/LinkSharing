@@ -31,3 +31,19 @@ function changeSeriousness(id,value){
         }
     });
 }
+
+function updateName(id) {
+    $.ajax({
+        url: nameUrl,
+        data:{
+            new_name: $("#new_name"+id).val(),
+            topic_id: id
+        },
+        success: function (response) {
+            console.log(response);
+            $("#subs_list").load(" #subs_list")
+            $("#trend_list").load(" #trend_list")
+            $("#topic_list").load(" #topic_list")
+        }
+    });
+}

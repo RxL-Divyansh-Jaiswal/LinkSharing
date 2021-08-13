@@ -9,13 +9,20 @@
     <script>
         var checkUrl = "${createLink(controller: 'user', action: 'checkUser')}"
 </script>
-    <title>FORGET PASSWORD</title>
+    <title>Forget Password</title>
 </head>
 <body>
 <!-- navbar -->
 <div id="navbar">
     <g:link controller="home" action="home">Link Sharing</g:link>
 </div>
+
+<g:if test="${flash.success}">
+    <h3 class="success">${flash.success}</h3>
+</g:if>
+<g:else test="${flash.error}">
+    <h3 class="error">${flash.error}</h3>
+</g:else>
 
 <h3 style="text-align: center; color: red">${flash.msg}</h3>
 
@@ -30,7 +37,7 @@
         <p id="ques" style="text-align: center;"></p>
         <input type="text" name="answer" placeholder="Answer" style="margin-left: 28%; font-size: 1.25rem; width: 19rem;" required>
         <br>
-        <input class="pass_input" type="password" name="new_password" placeholder="New Password (5-15 characters)" required>
+        <input class="pass_input" type="password" name="password" placeholder="New Password (5-15 characters)" required>
         <br>
         <input class="pass_input" type="password" name="cnf_password" placeholder="Confirm Password" required>
         <br>

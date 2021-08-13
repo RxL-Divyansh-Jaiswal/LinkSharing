@@ -167,7 +167,7 @@
 }
 
 .succMsg{
-    color: cornflowerblue;
+    color: green;
     text-align: center;
 }
 
@@ -176,7 +176,7 @@
 }
 
 .register_form form label{
-    font-size: 1.5rem;
+    font-size: 1.25rem;
 }
 
 .register_form input{

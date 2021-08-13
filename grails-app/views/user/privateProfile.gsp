@@ -13,8 +13,9 @@
         var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
         var visUrl = "${createLink(controller: 'topic', action: 'changeVisibility')}"
         var serUrl = "${createLink(controller: 'topic', action: 'changeSeriousness')}"
+        var nameUrl = "${createLink(controller: 'topic', action: 'updateName')}"
     </script>
-    <title>PRIVATE PROFILE PAGE</title>
+    <title>${session.user.name}--Profile</title>
 </head>
 
 <body>
@@ -59,21 +60,14 @@
 <!-- modals -->
 <g:render template="/templates/modals"/>
 
-<h3 class="success">${flash.topicSuccess}</h3>
+<g:if test="${flash.success}">
+    <h3 class="success">${flash.success}</h3>
+</g:if>
+<g:else test="${flash.error}">
+    <h3 class="error">${flash.error}</h3>
+</g:else>
 
-<h3 class="success">${flash.linkResSuccess}</h3>
-
-<h3 class="success">${flash.docResSuccess}</h3>
-
-<h3 class="success">${flash.inviteSuccess}</h3>
-
-<h3 class="error">${flash.topicError}</h3>
-
-<h3 class="error">${flash.linkResError}</h3>
-
-<h3 class="error">${flash.docResError}</h3>
-
-<h3 class="error">${flash.inviteError}</h3>
+<h3 id="searchErr" class="error"></h3>
 
 <div class="search_results"></div>
 
@@ -93,7 +87,7 @@
             </div>
         </div>
 
-        <div class="topics">
+        <div class="topics" style="height: auto;">
             <div class="head_box">
                 <h3 style="margin: 0 2%; display: inline-block;">Topics</h3>
             </div>
@@ -104,7 +98,8 @@
                         <asset:image src="${i.createdBy.photo}" style="height: 5rem; width: 5rem;"></asset:image>
 
                         <div class="topic_info">
-                        <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${i.id}">${i.name}</g:link></p>
+                            <input id="new_name${i.id}" type="text" placeholder="${i.name}">
+                            <button onclick="updateName(${i.id})">Save</button>
 
                             <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                 <div>
@@ -171,10 +166,6 @@
                 <h3 style="margin: 0 2%; display: inline-block;">Profile</h3>
             </div>
 
-            <h3 class="success">${flash.profileSucc}</h3>
-
-            <h3 class="error">${flash.profileErr}</h3>
-
             <g:form controller="user" action="updateProfile" method="post" enctype="multipart/form-data" style="margin: 2%;">
                 <label>Email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <input type="text" name="email" value="${session.user.email}" style="margin-top: 10px;">
@@ -189,7 +180,7 @@
                 <input type="text" name="userName" value="${session.user.userName}" style="margin-top: 10px;">
                 <br>
                 <label>Photo</label>
-                <input type="file" name="image" style="margin-top: 10px;">
+                <input type="file" name="image" accept="image/*" style="margin-top: 10px;">
                 <br>
                 <input class="profile_upd_btn" type="submit" value="Update">
             </g:form>
@@ -200,16 +191,12 @@
                 <h3 style="margin: 0 2%; display: inline-block;">Change Password</h3>
             </div>
 
-            <h3 class="success">${flash.passSuccess}</h3>
-
-            <h3 class="error">${flash.passError}</h3>
-
             <g:form controller="user" action="updatePassword" style="margin: 2%;">
                 <label>Password&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                <input type="password" name="password" style="margin-top: 10px;">
+                <input type="password" name="password" style="margin-top: 10px;" required>
                 <br>
                 <label>Confirm Password</label>
-                <input type="password" name="cnf_password" style="margin-top: 10px;">
+                <input type="password" name="cnf_password" style="margin-top: 10px;" required>
                 <br>
                 <input class="reset_pass_btn" type="submit" value="Change Password">
             </g:form>

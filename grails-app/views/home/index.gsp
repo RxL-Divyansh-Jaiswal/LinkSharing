@@ -23,9 +23,15 @@
     <g:link controller="home" action="home">Link Sharing</g:link>
 </div>
 
-<h3 class="success">${flash.logSuccess}</h3>
-<h3 class="success">${flash.resetSucc}</h3>
-<h3 class="success" style="color: cornflowerblue">${flash.dummy}</h3>
+<g:if test="${flash.success}">
+    <h3 class="succMsg">${flash.success}</h3>
+</g:if>
+<g:elseif test="${flash.error}">
+    <h3 class="errMsg">${flash.error}</h3>
+</g:elseif>
+<g:else>
+    <h3 class="errMsg" style="color: cornflowerblue">${flash.info}</h3>
+</g:else>
 
 <!-- main area -->
 <div id="main_area">
@@ -53,8 +59,6 @@
         <div class="login_form">
             <p class="heading"><i>Welcome Back</i></p>
 
-            <h3 class="errMsg">${flash.logError}</h3>
-
             <g:form controller="user" action="loginUser" method="post">
                 <label>Email &nbsp; &nbsp; &nbsp;</label>
                 <input type="email" name="email" required>
@@ -71,10 +75,6 @@
         <div class="register_form">
             <p class="heading"><i>New Here, Let's get started...</i></p>
 
-            <h3 class="succMsg">${flash.success}</h3>
-
-            <h3 class="errMsg">${flash.resError}</h3>
-
             <g:form controller="user" action="registerUser" method="post" enctype="multipart/form-data">
                 <label>First name</label>
                 <input type="text" name="firstName" placeholder="John" required style="margin-left: 18%;">
@@ -83,16 +83,16 @@
                 <input type="text" name="lastName" placeholder="Smith" required style="margin-left: 19%">
                 <br>
                 <label>Email &nbsp; &nbsp; &nbsp;</label>
-                <input type="email" name="email" placeholder="johnSmith@gmail.com" required style="margin-left: 20.5%">
+                <input type="email" name="email" placeholder="johnSmith@gmail.com" required style="margin-left: 20%">
                 <br>
                 <label>Username &nbsp; &nbsp; &nbsp;</label>
-                <input type="text" name="userName" placeholder="jSmith" required style="margin-left: 11%">
+                <input type="text" name="userName" placeholder="jSmith" required style="margin-left: 12%">
                 <br>
                 <label style="margin-top: 10px;">Password</label>
-                <input type="password" name="password" placeholder="(5 - 15 characters)" required style="margin-left: 21%">
+                <input type="password" name="password" placeholder="(5 - 15 characters)" required style="margin-left: 20.5%">
                 <br>
                 <label style="margin-top: 10px;">Confirm Password</label>
-                <input type="password" name="cnf_password" placeholder="(5 - 15 characters)" required>
+                <input type="password" name="cnf_password" placeholder="(5 - 15 characters)" required style="margin-left: 2.5%">
                 <br>
                 <label style="margin-top: 10px;">Security Question</label>
                 <select name="question" required>
@@ -109,7 +109,7 @@
                 <input type="text" name="answer" style="width: 14rem;" placeholder="Remember and keep this confidential" required>
                 <br>
                 <label style="margin-top: 10px;">Photo</label>
-                <input type="file" name="image">
+                <input type="file" name="image" accept="image/*">
                 <br>
                 <input id="registerBtn" type="submit" value="Register">
             </g:form>

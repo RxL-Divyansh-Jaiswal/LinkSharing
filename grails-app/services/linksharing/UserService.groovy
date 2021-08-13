@@ -2,6 +2,7 @@ package linksharing
 
 import grails.gorm.transactions.Transactional
 import grails.web.servlet.mvc.GrailsParameterMap
+import org.springframework.web.multipart.MultipartFile
 
 @Transactional
 class UserService {
@@ -9,62 +10,54 @@ class UserService {
     def serviceMethod() {}
 
 //  register service
-    def register(def request, Map params){
-        if(params.password != params.cnf_password){
-//          redirect back with error msg
-            return "Passwords don't match, Please try again..."
-        }else{
-//          creating new user
-            User newUser = new User(params)
-            def file = request.getFile('image')
-            String extension = "${file.originalFilename.split("\\.")[-1]}"
-
-            if(file && !file.empty) {
-                File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${params.userName}.${extension}")
-                file.transferTo(photo)
-                newUser.photo = "/avatars/${params.userName}.${extension}"
-            }else{
-                newUser.photo = "/avatars/default_Profile.jpg"
-            }
-
-            newUser.active = true
-
+    Map register(String firstName, String lastName, String email, String userName, String password, String cnf_password, String question, String answer, MultipartFile image) {
+        Map response = [:]
+        if (password != cnf_password) {
+            response.msg = "Passwords don't match, Please try again..."
+        } else {
+            User newUser = new User(firstName: firstName, lastName: lastName, email: email, userName: userName, password: password, question: question, answer: answer)
             try {
-//              redirect back with success msg
-                newUser.save(flush:true,failOnError:true)
-                return "Registered Successfully, Please Login to continue..."
-            }catch(Exception e) {
-//              redirect back with error msg
-                return "Error in registering, Please try again..."
+                newUser.save(flush: true, failOnError: true)
+                String extension = "${image.originalFilename.split("\\.")[-1]}"
+
+                if (image && !image.empty) {
+                    File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${userName}.${extension}")
+                    image.transferTo(photo)
+                    newUser.photo = "/avatars/${userName}.${extension}"
+                } else {
+                    newUser.photo = "/avatars/default_Profile.jpg"
+                }
+
+                newUser.active = true
+                response.msg = "Registered Successfully, Please Login to continue..."
+                response.user = newUser
+            } catch (Exception e) {
+                println e
+                response.msg =  "Error in registering, Please try again..."
             }
         }
+        response
     }
 
 //  login service
-    Map login(Map params){
-        Map map = [:]
-        String msg
-        User user = User.findByEmail(params.email)
-
-        if(user == null){
-//          redirect back with error msg
-            msg = "No account associated with this email"
-        }else{
-            if(params.password != user.password) {
-//            redirect back with an error msg
-                msg = "Invalid email/password"
-            }else{
-                if(user.active == false){
-                    msg = "Please contact admin"
-                }else{
-                    map.put('user',user)
-                    msg = "Login Successfully"
+    Map login(String email, String password){
+        Map response = [:]
+        User user = User.findByEmail(email)
+        if (user) {
+            if (password != user.password) {
+                response.msg = "Invalid email/password"
+            } else {
+                if (!user.active) {
+                    response.msg = "Please contact admin"
+                } else {
+                    response.put('user', user)
                 }
             }
+        } else {
+            response.msg = "No account associated with this email"
         }
 
-        map.put('msg',msg)
-        return map
+        response
     }
 
 //  getting list of user subscriptions
@@ -82,22 +75,21 @@ class UserService {
     }
 
 //  update profile service
-    Map profileUpdate(def request,User user,Map params){
-        Map res = [:]
+    Map profileUpdate(User user, String email, String firstName, String lastName, String userName, MultipartFile image){
+        Map response = [:]
         File prevPhoto = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/${user.photo}") // prev photo of user if available
-        def file = request.getFile('image') // new photo from update form
-        String extension = "${file.originalFilename.split("\\.")[-1]}" // extension of new photo
+        String extension = "${image.originalFilename.split("\\.")[-1]}" // extension of new photo
         String newPhoto
 
-        if(file && !file.empty) {
+        if(image && !image.empty) {
             if(user.photo == "/avatars/default_Profile.jpg"){
                 File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
-                file.transferTo(photo)
+                image.transferTo(photo)
                 newPhoto = "/avatars/${user.userName}.${extension}"
             }else{
                 prevPhoto.delete()
                 File photo = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/images/avatars/${user.userName}.${extension}")
-                file.transferTo(photo)
+                image.transferTo(photo)
                 newPhoto = "/avatars/${user.userName}.${extension}"
             }
         }else{
@@ -105,41 +97,41 @@ class UserService {
         }
 
 //      map with updated fields
-        Map map = ['email':params.email,'firstName':params.firstName,'lastName':params.lastName,'userName':params.userName, 'photo':newPhoto,'id':user.id]
+        Map map = ['email':email,'firstName':firstName,'lastName':lastName,'userName':userName, 'photo':newPhoto,'id':user.id]
 
         try{
             User.executeUpdate('update User set email=:email, firstName=:firstName, lastName=:lastName, userName=:userName, photo=:photo where id=:id',map)
             User modifiedUser = User.findById(user.id)
 
-            res.put('user',modifiedUser)
-            res.put('msg', "Updated Successfully")
+            response.user = modifiedUser
+            response.msg ="Updated Successfully"
         }catch(Exception e){
-            res.put('user',user)
-            res.put('msg',"Error in updating...")
+            response.user = user
+            response.msg = "Error in updating..."
         }
 
-        return res
+        response
     }
 
 //  update password service
-    def passwordUpdate(User user,Map params){
-        String msg
-        if(params.password != params.cnf_password){
+    def passwordUpdate(User user,String password, String cnf_password){
+        String response
+        if(password != cnf_password){
 //          redirect back with error msg
-            msg = "Passwords don't match, Please try again..."
+            response = "Passwords don't match, Please try again..."
         }else{
 //          update user password
             User u = User.findById(user.id)
-            u.password = params.password
+            u.password = password
 
             try{
                 u.save(flush:true,failOnError:true)
-                msg = "Updated Successfully"
+                response = "Updated Successfully"
             }catch(Exception e){
-                msg = "Error in updating..."
+                response = "Error in updating..."
             }
 
-            return msg
+            response
         }
     }
 
@@ -147,7 +139,7 @@ class UserService {
     def activate(int id){
         User user = User.findById(id)
 
-        if(user.active == true){
+        if(user.active){
             return "No changes made"
         }else{
             user.active = true
@@ -160,7 +152,7 @@ class UserService {
     def deactivate(int id){
         User user = User.findById(id)
 
-        if(user.active == false || user.active == null){
+        if(!user.active || !user.active){
             return "No changes made"
         }else{
             user.active = false
@@ -170,38 +162,40 @@ class UserService {
     }
 
 //  finding user
-    def findUser(String email){
+    Map findUser(String email){
+        Map response = [:]
         User u = User.findByEmail(email)
         String msg = u != null ? "Found the user" : "No account with this email"
 
-        List list = []
-        list << u
-        list << msg
-        return list
+        response.user = u
+        response.msg = msg
+
+        response
     }
 
 //  password reset service
-    def reset(Map params){
-        User u = User.findByEmail(params.email) // finding user by email
-        String msg
+    Map reset(String email, String answer, String new_password, String cnf_password){
+        User u = User.findByEmail(email) // finding user by email
+        Map response = [:]
 
-        if(u.answer != params.answer){
-            msg =  "Answer don't match, try again..."
+        if(u.answer != answer){
+            response.msg = "Answer don't match, try again..."
         }else{
-            if(params.new_password != params.cnf_password){
-                msg "Passwords don't match, Please try again..."
+            if(new_password != cnf_password){
+                response.msg = "Passwords don't match, Please try again..."
             }else{
-                u.password = params.new_password
+                u.password = new_password
 
                 try{
                     u.save(flush:true,failOnError:true)
-                    msg = "Password Reset Successful..."
+                    response.user = u
+                    response.msg = "Password Reset Successful..."
                 }catch(Exception e){
-                    msg = "Error in resetting the password..."
+                    response.msg = "Error in resetting the password..."
                 }
             }
         }
 
-        return msg
+        response
     }
 }

@@ -10,7 +10,7 @@
     <script>
         var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
     </script>
-    <title>USER PROFILE PAGE</title>
+    <title>${user.name}--Profile</title>
 </head>
 <body>
 <!-- navbar -->
@@ -70,6 +70,8 @@
 
 <h3 class="error">${flash.inviteError}</h3>
 
+<h3 id="searchErr" class="error"></h3>
+
 <div class="search_results"></div>
 
 <!-- main area -->
@@ -82,7 +84,7 @@
                 <p style="margin: 0;">${user.name}</p>
                 <p style="margin: 0;">@${user.userName}</p>
                 <p style="margin: 0;">Subscriptions&nbsp;&nbsp;&nbsp;&nbsp;Topics</p>
-                <p style="margin: 0;">${subscriptions.size()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${topics.size()}</p>
+                <p style="margin: 0;">${user.subscriptions.size()}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${user.topics.size()}</p>
             </div>
         </div>
 
@@ -182,8 +184,8 @@
                             <g:else>
                                 <p style="float: right; margin: 0;"><a
                                         href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
-                                </div>
                             </g:else>
+                            </div>
                         </div>
                     </div>
                 </g:each>

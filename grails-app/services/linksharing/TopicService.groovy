@@ -4,6 +4,7 @@ import dto.TopicDetailDTO
 import grails.gorm.transactions.Transactional
 import linksharing.enums.Seriousness
 import linksharing.enums.Visibility
+import org.springframework.web.multipart.MultipartFile
 
 @Transactional
 class TopicService {
@@ -13,40 +14,39 @@ class TopicService {
     }
 
 //  create service
-    def create(User user, Map params) {
+    def create(User user, String name, String visibility) {
+        Map response = [:]
         User creator = User.findById(user.id)
-        if(Topic.findByNameAndCreatedBy(params.name,user)){
-            return "You cannot create two topics with same name, Try again with other name"
+        if(Topic.findByNameAndCreatedBy(name,user)){
+            response.msg = "You cannot create two topics with same name, Try again with other name"
         }else{
-            Topic newTopic = new Topic(params)
+            Topic newTopic = new Topic(name: name, visibility: Visibility.valueOf(visibility))
             newTopic.createdBy = creator
 
             try {
                 newTopic.save(flush: true, failOnError: true)
+
                 Subscription newSubscription = new Subscription(subscriber: creator, topic: newTopic, seriousness: Seriousness.Very_Serious)
+                newSubscription.save(flush:true)
+                creator.subscriptions.add(newSubscription)
 
-                try {
-                    newSubscription.save(flush: true, failOnError: true)
-                    creator.subscriptions.add(newSubscription)
-                    creator.save(flush: true, failOnError: true)
-                } catch (Exception e) {
-                    return "Topic created, but error in creating subscription"
-                }
-
-                return "Topic Created and Subscribed Successfully"
+                response.msg = "Topic created Successfully"
+                response.topic = newTopic
             } catch (Exception e) {
-                println e
-                return "Error in creating topic"
+                response.msg =  "Error in creating topic"
             }
         }
+
+        response
     }
 
 //  link resource service
-    def linkResource(User user, Map params){
+    def linkResource(User user, String topic, String description, String url){
+        Map response = [:]
         User creator = User.findById(user.id)
-        Topic relTopic = Topic.findByName(params.topic)
+        Topic relTopic = Topic.findByName(topic)
 
-        LinkResource lRes = new LinkResource(createdBy: creator, topic: relTopic, description: params.description, url: params.url)
+        LinkResource lRes = new LinkResource(createdBy: creator, topic: relTopic, description: description, url: url)
 
         try{
             lRes.save(flush:true,failOnError:true)
@@ -66,29 +66,34 @@ class TopicService {
                     }
                 }
             }
-            return "Link Resource created and added to list successfully"
+
+            response.msg =  "Link Resource Created Successfully"
+            response.resource = lRes
         }catch(Exception e){
             println e
-            return "Error in creating link resource"
+            response.msg =  "Error in creating link resource"
         }
+
+        response
     }
 
 //  doc resource service
-    def docResource(User user, Map params, def request){
+    def docResource(User user, String topic, String description, MultipartFile file){
+        Map response = [:]
         User creator = User.findById(user.id)
-        Topic relTopic = Topic.findByName(params.topic)
+        Topic relTopic = Topic.findByName(topic)
 
-        def file = request.getFile('doc')
         String docName = "${file.originalFilename.split("\\.")[0]}" + ".${file.originalFilename.split("\\.")[-1]}"
 
         String docPath
+
         if(file && !file.empty) {
             File document = new File("/home/rxlogix/IdeaProjects/LinkSharing/grails-app/assets/docFiles/${docName}")
             file.transferTo(document)
             docPath = document.path
         }
 
-        DocumentResource dRes = new DocumentResource(createdBy: creator, topic: relTopic, description: params.description, name: file.originalFilename, filePath: docPath)
+        DocumentResource dRes = new DocumentResource(createdBy: creator, topic: relTopic, description: description, name: file.originalFilename, filePath: docPath)
 
         try{
             dRes.save(flush:true, failOnError: true)
@@ -109,31 +114,28 @@ class TopicService {
                 }
             }
 
-            return  "Document Resource created and added to list successfully"
+            response.msg =  "Document Resource Created Successfully"
+            response.resource = dRes
         }catch(Exception e){
-            println e
-            return "Error in creating document resource"
+            response.msg = "Error in creating document resource"
         }
+        response
     }
 
 //  search service
     def search(String text){
-        List<Topic> topics = Topic.findAllByNameLikeAndVisibility(text,"Public")
+        List<Topic> topics = Topic.findAllByNameIlikeAndVisibility("${text}%",Visibility.Public)
         return topics
     }
 
 //  subscribe service
     def subscribe(User user,int id){
         Topic topic = Topic.findById(id)
-        Subscription subscription = new Subscription(subscriber: user,topic: topic, seriousness: Seriousness.Very_Serious)
+        Subscription subscription = new Subscription(subscriber: user, topic: topic, seriousness: Seriousness.Very_Serious)
 
-        try{
-            subscription.save(flush:true,failOnError:true)
-            topic.subscriptions.add(subscription)
-            return subscription
-        }catch(Exception e){
-            return null
-        }
+        subscription.save(flush: true, failOnError: true)
+        topic.subscriptions.add(subscription)
+        subscription
     }
 
 //  unsubscribe service
@@ -162,7 +164,8 @@ class TopicService {
             }
 
         }
-        return list.sort({ a, b -> a.postCount == b.postCount ? 0 : a.postCount < b.postCount ? 1 : -1 })
+
+        list.sort({ a, b -> a.postCount == b.postCount ? 0 : a.postCount < b.postCount ? 1 : -1 })
     }
 
 //  visibility service
@@ -183,27 +186,53 @@ class TopicService {
 
 //  invite service
     def invite(String email, String topicName){
+        Map response = [:]
         User user = User.findByEmail(email)
 
-        if(user == null){
-            return "Cannot find any user with this email"
+        if(!user){
+            response.msg = "Cannot find any user with this email"
         }else{
             Topic relTopic = Topic.findByName(topicName)
-            Subscription newSubscription = new Subscription(subscriber: user,topic: relTopic, seriousness: Seriousness.Serious)
+            Subscription subscription = Subscription.findByTopicAndSubscriber(relTopic,user)
+            if(subscription){
+                response.msg = "User is already subscribed to this topic"
+            }else{
+                Subscription newSubscription = new Subscription(subscriber: user,topic: relTopic, seriousness: Seriousness.Serious)
 
-            try{
-                newSubscription.save(flush:true,failOnError:true)
-                relTopic.subscriptions.add(newSubscription)
-                user.subscriptions.add(newSubscription)
-                return "Invited Successfully"
-            }catch(Exception e){
-                return "Error in inviting"
+                try{
+                    newSubscription.save(flush:true,failOnError:true)
+                    relTopic.subscriptions.add(newSubscription)
+                    user.subscriptions.add(newSubscription)
+                    response.msg = "Invited Successfully"
+                    response.subscription = newSubscription
+                }catch(Exception e){
+                    response.msg = "Error in inviting"
+                }
             }
+        }
+
+        response
+    }
+
+//  update name service
+    def update(int id, String new_name){
+        Topic topic = Topic.findById(id)
+        String prevName = topic.name
+
+        topic.name = new_name
+
+        try{
+            topic.save(flush:true,failOnError: true)
+            return "Name changed successfully"
+        }catch(Exception e){
+            topic.name = prevName
+            topic.save(flush:true)
+            return "Error in changing the name"
         }
     }
 
 //  delete service
-    def delete(User user, int id) {
+    def delete(int id) {
         Topic topic = Topic.findById(id)
 
         try {
@@ -212,7 +241,7 @@ class TopicService {
             Subscription.deleteAll(subscriptions)
             Resource.deleteAll(resources)
             topic.delete(flush: true,failOnError: true)
-            return "Topic along with associated subscriptions and resources deleted successfully"
+            return "Topic Deleted Successfully"
         } catch (Exception e) {
             return "Error in deleting topic"
         }

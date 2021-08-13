@@ -11,13 +11,14 @@
     <asset:javascript src="readItem.js"></asset:javascript>
     <asset:javascript src="modifier.js"></asset:javascript>
     <script>
-        var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}"
-        var readUrl = "${createLink(controller: 'resource', action: 'markRead')}"
-        var visUrl = "${createLink(controller: 'topic', action: 'changeVisibility')}"
-        var serUrl = "${createLink(controller: 'topic', action: 'changeSeriousness')}"
+        var dataUrl = "${createLink(controller: 'topic', action: 'searchTopics')}";
+        var readUrl = "${createLink(controller: 'resource', action: 'markRead')}";
+        var visUrl = "${createLink(controller: 'topic', action: 'changeVisibility')}";
+        var serUrl = "${createLink(controller: 'topic', action: 'changeSeriousness')}";
+        var nameUrl = "${createLink(controller: 'topic', action: 'updateName')}";
     </script>
 
-    <title>DASHBOARD</title>
+    <title>${session.user.name}--Dashboard</title>
 </head>
 
 <body>
@@ -62,27 +63,14 @@
 <!-- modals -->
 <g:render template="/templates/modals"/>
 
-<h3 class="success">${flash.logSuccess}</h3>
+<g:if test="${flash.success}">
+    <h3 class="success">${flash.success}</h3>
+</g:if>
+<g:else test="${flash.error}">
+    <h3 class="error">${flash.error}</h3>
+</g:else>
 
-<h3 class="success">${flash.topicSuccess}</h3>
-
-<h3 class="success">${flash.linkResSuccess}</h3>
-
-<h3 class="success">${flash.docResSuccess}</h3>
-
-<h3 class="success">${flash.inviteSuccess}</h3>
-
-<h3 class="success">${flash.topicDelSuccess}</h3>
-
-<h3 class="success">${flash.resourceDelSuccess}</h3>
-
-<h3 class="error">${flash.topicError}</h3>
-
-<h3 class="error">${flash.linkResError}</h3>
-
-<h3 class="error">${flash.docResError}</h3>
-
-<h3 class="error">${flash.inviteError}</h3>
+<h3 id="searchErr" class="error"></h3>
 
 <div class="search_results"></div>
 
@@ -197,9 +185,9 @@
                             <div class="topic_details" style="margin-bottom: 8%;">
                                 <asset:image src="${i.creatorPhoto}" style="height: 5rem; width: 5rem;"></asset:image>
                                 <div class="topic_info">
-                                <p style="margin: 0;"><g:link controller="topic" action="viewTopic" id="${i.topicId}">${i.topicName}</g:link></p>
-                                    %{--<input type="text" placeholder="${i.topicName}">--}%
-                                    %{--<button>Save</button>--}%
+
+                                    <input id="new_name${i.topicId}" type="text" placeholder="${i.topicName}">
+                                    <button onclick="updateName(${i.topicId})">Save</button>
 
                                     <div style="display: flex; flex-direction: row; justify-content: space-between;">
                                         <div>
@@ -384,8 +372,8 @@
                                     <g:else>
                                         <p style="float: right; margin: 0;"><a
                                                 href="${i.url}" target="_blank">View Full Site</a>&nbsp;&nbsp;<a class="readLink" href="/resource/markRead/${i.id}">Mark as Read</a>&nbsp;&nbsp;<g:link controller="resource" action="viewResource" id="${i.id}">View Post</g:link></p>
-                                        </div>
                                     </g:else>
+                                </div>
                             </div>
                         </div>
                     </g:if>

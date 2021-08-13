@@ -4,6 +4,7 @@ import dto.TopicDetailDTO
 import grails.converters.JSON
 import linksharing.enums.Seriousness
 import linksharing.enums.Visibility
+import org.springframework.web.multipart.MultipartFile
 
 class TopicController {
 
@@ -12,115 +13,134 @@ class TopicController {
     def index() { }
 
 //  creating new topic
-    def createTopic(){
-        String msg = topicService.create(session.user,params) // calling create topic service
+    def createTopic(String name, String visibility){
+        Map response = topicService.create(session.user,name,visibility) // calling create topic service
 
-//      redirecting according to response
-        if(msg.split(" ").last() == "Successfully"){
-            flash.topicSuccess = msg
+        if(response.topic){
+            flash.success = response.msg
         }else{
-            flash.topicError = msg
+            flash.error = response.msg
         }
         redirect(uri: request.getHeader('referer'))
     }
 
 //  creating link resource
-    def addLinkResource(){
-        String msg = topicService.linkResource(session.user,params) // calling link resource service
+    def addLinkResource(String topic, String description, String url){
+        Map response = topicService.linkResource(session.user,topic,description,url) // calling link resource service
 
-//      redirecting according to response
-        if(msg.split(" ")[0] == "Link"){
-            flash.linkResSuccess = msg
+        if(response.resource){
+            flash.success = response.msg
         }else{
-            flash.linkResError = msg
+            flash.error = response.msg
         }
         redirect(uri: request.getHeader('referer'))
     }
 
 //  creating a doc resource
-    def addDocResource(){
-        String msg = topicService.docResource(session.user,params,request) // caling doc resource service
+    def addDocResource(String topic, String description, def request){
+        MultipartFile doc = request.getFile("doc")
+        Map response = topicService.docResource(session.user,topic,description,doc) // calling doc resource service
 
-//      redirecting according to response
-        if(msg.split(" ")[0] == "Document"){
-            flash.docResSuccess = msg
+        if(response.resource){
+            flash.success = response.msg
         }else{
-            flash.docResError = msg
+            flash.error = response.msg
         }
         redirect(uri: request.getHeader('referer'))
     }
 
 //  view a topic
     def viewTopic(){
-        Topic topic = Topic.findById(params.id) // finding topic by id
-        List<Resource> resources = Resource.findAllByTopic(topic) // all resources of the topic
-        List<Subscription> subscriptions = Subscription.findAllByTopic(topic) // all subscriptions of topic
-        render(view: "viewTopic", model: [topic: topic,resources: resources, subscriptions: subscriptions])
+        if(!session.user){
+            redirect url: "/"
+        }else {
+            Topic topic = Topic.findById(params.id) // finding topic by id
+            List<Resource> resources = Resource.findAllByTopic(topic) // all resources of the topic
+            List<Subscription> subscriptions = Subscription.findAllByTopic(topic) // all subscriptions of topic
+            render(view: "viewTopic", model: [topic: topic, resources: resources, subscriptions: subscriptions])
+        }
     }
 
 //  search topics
-    def searchTopics(){
-        List<Topic> detailedTopics = Topic.findAllByNameIlikeAndVisibility("${params.text}%", Visibility.Public) // calling search service
-        List<TopicDetailDTO> topics = []
+    def searchTopics(String text){
+        if((session.user.admin && text == "") || text != ""){
+            List<Topic> detailedTopics = topicService.search(text) // calling search service
+            List<TopicDetailDTO> topics = []
 
-        detailedTopics.each {
-          if(Subscription.findByTopicAndSubscriber(it,session.user) != null){
-                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: true)
-            }else{
-                topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id,creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: false)
+            detailedTopics.each {
+                if(Subscription.findByTopicAndSubscriber(it,session.user) != null){
+                    topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id, creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: true)
+                }else{
+                    topics << new TopicDetailDTO(topicId: it.id, topicName: it.name, subsCount: it.subscriptions.size(), postCount: it.resources.size(), creatorId: it.createdBy.id,creatorPhoto: it.createdBy.photo, creatorUserName: it.createdBy.userName, isSubscribed: false)
+                }
             }
+            render(topics as JSON)
+        }else{
+            List list = []
+            render(list as JSON)
         }
-        render(topics as JSON)
     }
 
 //  subscribe a topic
     def subscribeTopic(){
-        Subscription subscription = topicService.subscribe(session.user, params.int("id")) // calling subscribe service
+        Subscription response = topicService.subscribe(session.user, params.int("id")) // calling subscribe service
         redirect(uri: request.getHeader('referer'))
     }
 
 //  unsubscribe a topic
     def unsubscribeTopic(){
-        Subscription subscription = topicService.unsubscribe(session.user, params.int("id")) // calling unsubscribe service
+        Subscription response = topicService.unsubscribe(session.user, params.int("id")) // calling unsubscribe service
         redirect(uri: request.getHeader('referer'))
     }
 
 //  change visibility of a topic
-    def changeVisibility(){
-        println params
-        String msg = topicService.visibility(params.int("topic_id"),params.new_visibility) // calling visibility service
+    def changeVisibility(int topic_id, String new_visibility){
+        String msg = topicService.visibility(topic_id,new_visibility) // calling visibility service
         List list = []
         list << msg
         render(list as JSON)
     }
 
 //  change seriousness of a subscription
-    def changeSeriousness(){
+    def changeSeriousness(int subs_id, String new_seriousness){
         println params
-        String msg = topicService.seriousness(params.int("subs_id"),params.new_seriousness) // calling seriousness service
+        String msg = topicService.seriousness(subs_id,new_seriousness) // calling seriousness service
         List list = []
         list << msg
         render(list as JSON)
     }
 
 //  send invite
-    def sendInvite(){
-        String msg = topicService.invite(params.email, params.topic) // calling invite service
+    def sendInvite(String email, String topic){
+        Map response = topicService.invite(email, topic) // calling invite service
 
-        if(msg.split(" ")[0] == "Invited"){
-            flash.inviteSuccess = msg
+        if(response.subscription){
+            flash.success = response.msg
         }else{
-            flash.inviteError = msg
+            flash.error = response.msg
         }
         redirect(uri: request.getHeader('referer'))
     }
 
+//  update name of an existing topic
+    def updateName(int topic_id,String new_name){
+        String msg = topicService.update(topic_id,new_name)
+
+        List list = []
+        list << msg
+        render(list as JSON)
+    }
+
 //  delete a topic
     def deleteTopic(int id){
-        String msg = topicService.delete(session.user,id) // calling delete service
+        if(!session.user){
+            redirect url: "/"
+        }else {
+            String msg = topicService.delete(id) // calling delete service
 
 //      redirecting according to response
-        flash.topicDelSuccess = msg
-        redirect(controller: "user", action: "dashboard")
+            flash.success = msg
+            redirect(controller: "user", action: "dashboard")
+        }
     }
 }

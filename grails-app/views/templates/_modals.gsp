@@ -15,7 +15,7 @@
             <div class="modal-body">
                 <g:form controller="topic" action="createTopic" method="post">
                     <label>Name&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="text" name="name" required>
+                    <input type="text" name="name" placeholder="(max 20 characters)" required>
                     <br>
                     <label>Visibility&nbsp;</label>
                     <select style="margin-top: 1%;" name="visibility">
@@ -42,11 +42,11 @@
             <div class="modal-body">
                 <g:form controller="topic" action="addDocResource" method="post" enctype="multipart/form-data">
                     <label>Document</label>
-                    <input type="file" name="doc">
+                    <input type="file" name="doc" required>
                     <br>
                     <label style="vertical-align: top;">Description</label>
                     <textarea id="desp" name="description" rows="2" cols="35" style="margin-top: 2%;"
-                              placeholder="This document is about..."></textarea>
+                              placeholder="This document is about... (upto 1000 characters)" required></textarea>
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <select name="topic" style="margin-top: 1%;">
@@ -74,11 +74,11 @@
             <div class="modal-body">
                 <g:form controller="topic" action="addLinkResource" method="post">
                     <label>Link&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-                    <input type="link" name="url">
+                    <input type="link" name="url" required>
                     <br>
                     <label style="vertical-align: top;">Description</label>
                     <textarea id="desp" name="description" rows="2" cols="35" style="margin-top: 2%;"
-                              placeholder="This link is about..."></textarea>
+                              placeholder="This link is about... (upto 1000 characters)" required></textarea>
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                     <select name="topic" style="margin-top: 1%;">
@@ -106,7 +106,7 @@
             <div class="modal-body">
                 <g:form controller="topic" action="sendInvite" method="post">
                     <label>Email&nbsp;&nbsp;&nbsp;</label>
-                    <input type="email" name="email">
+                    <input type="email" name="email" required>
                     <br>
                     <label>Topic&nbsp;&nbsp;&nbsp;</label>
                     <select name="topic" style="margin-top: 1%;">

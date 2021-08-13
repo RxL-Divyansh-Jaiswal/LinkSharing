@@ -28,15 +28,10 @@ class ResourceService {
         Resource resource = Resource.findById(id)
         ResourceRating rating = ResourceRating.findByResourceAndUser(resource,user)
 
-        if(rating == null){
+        if(!rating){
             ResourceRating newRating = new ResourceRating(resource: resource, user: user,score: score)
-
-            try{
-                newRating.save(flush:true,failOnError:true)
-                return "Resource rated"
-            }catch(Exception e){
-                println e
-            }
+            newRating.save(flush:true,failOnError:true)
+            return "Resource rated"
         }else{
 //          new map with updated values
             Map map =['resource':resource,'user':user,'score':score,'id':rating.id]
@@ -48,7 +43,7 @@ class ResourceService {
 //  delete service
     def delete(int id){
         Resource resource = Resource.findById(id)
-        ResourceRating ratings = ResourceRating.findAllByResource(resource)
+        List<ResourceRating> ratings = ResourceRating.findAllByResource(resource)
 
         try{
             ResourceRating.deleteAll(ratings)

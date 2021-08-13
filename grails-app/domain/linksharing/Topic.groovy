@@ -15,5 +15,6 @@ class Topic {
 
 //  enum visibility
     static constraints = {
+        name maxSize: 20
     }
 }

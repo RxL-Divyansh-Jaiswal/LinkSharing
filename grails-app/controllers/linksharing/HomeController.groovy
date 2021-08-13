@@ -3,11 +3,15 @@ package linksharing
 class HomeController {
 
     def index() {
-        render(view: 'index')
+        if(session.user){
+            redirect(controller: "user", action: "dashboard")
+        }else{
+            render(view: 'index')
+        }
     }
 
     def home(){
-        if(session.user != null){
+        if(session.user){
             redirect(controller: "user", action: "dashboard")
         }else{
             redirect url: "/"
@@ -15,7 +19,7 @@ class HomeController {
     }
 
     def dummy(){
-        flash.dummy = "Please login or register to continue..."
+        flash.info = "Please login or register to continue..."
 
         redirect url: "/"
     }
