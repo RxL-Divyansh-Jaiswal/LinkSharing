@@ -103,7 +103,6 @@ class TopicController {
 
 //  change seriousness of a subscription
     def changeSeriousness(int subs_id, String new_seriousness){
-        println params
         String msg = topicService.seriousness(subs_id,new_seriousness) // calling seriousness service
         List list = []
         list << msg
@@ -143,4 +142,5 @@ class TopicController {
             redirect(controller: "user", action: "dashboard")
         }
     }
+    
 }
